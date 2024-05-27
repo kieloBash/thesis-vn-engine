@@ -12,8 +12,9 @@ import { TooltipButton } from "./tooltip-btn";
 import { useSidebarContext } from "@/providers/sidebar";
 import clsx from "clsx";
 import { SidebarButtonsType } from "@/types";
-import MoreCharacters from "./character-template";
-import MoreBackgrounds from "./background-template";
+import MoreCharacters from "./sidebar-template/character-template";
+import MoreBackgrounds from "./sidebar-template/background-template";
+import MoreCommands from "./sidebar-template/commands-template";
 
 const Sidebar = () => {
   const BTNS = [
@@ -64,7 +65,7 @@ const Sidebar = () => {
           ) : active === "Background" ? (
             <MoreBackgrounds />
           ) : (
-            ""
+            <MoreCommands />
           )}
         </div>
       ) : (

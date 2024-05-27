@@ -1,4 +1,11 @@
-import { ArgumentTax, ArgumentType, Background, Speaker } from "@/types";
+import {
+  ArgumentTax,
+  ArgumentType,
+  Background,
+  Command,
+  CommandType,
+  Speaker,
+} from "@/types";
 
 import ANJELO from "@/public/Characters/Anjelo.png";
 import EJAY from "@/public/Characters/Ejay.png";
@@ -49,4 +56,12 @@ export const BACKGROUNDS: Background[] = [
   { name: "Salon (Dawn)", image: SAL_DAWN },
   { name: "Salon (Night)", image: SAL_NIGHT },
   { name: "Salon (MidNight)", image: SAL_MIDNIGHT },
+];
+
+export const COMMANDS: Command[] = [
+  { name: "CharacterMoveLeft", type: CommandType.Action, parameters: [] },
+  { name: "CharacterMoveRight", type: CommandType.Action, parameters: [] },
+  { name: "CharacterMoveUp", type: CommandType.Action, parameters: [] },
+  { name: "CharacterMoveLeft", type: CommandType.Action, parameters: [] },
+  { name: "CharacterShrink", type: CommandType.Action, parameters: [] },
 ];
