@@ -1,17 +1,17 @@
 "use client";
-import { Argument, Speaker, StoryLine } from "@/types";
+import { Argument, Speaker, Dialogue } from "@/types";
 import * as React from "react";
 
 type ContextType = {
   speaker: Speaker | undefined;
   setSpeaker: (temp: Speaker | undefined) => void;
-  story: StoryLine[];
-  setStory: (temp: StoryLine[]) => void;
+  story: Dialogue[];
+  setStory: (temp: Dialogue[]) => void;
   argumentLines: Argument[];
   setArguments: (temp: Argument[]) => void;
 
-  selectedLine: StoryLine | undefined;
-  setSelectedLine: (temp: StoryLine | undefined) => void;
+  selectedLine: Dialogue | undefined;
+  setSelectedLine: (temp: Dialogue | undefined) => void;
   selectedIndex: number;
   setSelectedIndex: (temp: number) => void;
 
@@ -19,18 +19,19 @@ type ContextType = {
   setToggleModify: (temp: boolean) => void;
 
   resetModify: () => void;
+  AddDialogue: (newDialogue: Dialogue) => void;
 };
 
 const Context = React.createContext<ContextType>({
   speaker: undefined,
   setSpeaker: (temp: Speaker | undefined) => {},
   story: [],
-  setStory: (temp: StoryLine[]) => {},
+  setStory: (temp: Dialogue[]) => {},
   argumentLines: [],
   setArguments: (temp: Argument[]) => {},
 
   selectedLine: undefined,
-  setSelectedLine: (temp: StoryLine | undefined) => {},
+  setSelectedLine: (temp: Dialogue | undefined) => {},
   selectedIndex: -1,
   setSelectedIndex: (temp: number) => {},
 
@@ -38,20 +39,25 @@ const Context = React.createContext<ContextType>({
   setToggleModify: (temp: boolean) => {},
 
   resetModify: () => {},
+  AddDialogue: (newDialogue: Dialogue) => {},
 });
 
 export const useStoryContext = () => React.useContext(Context);
 
 const StoryProvider = ({ children }: { children: React.ReactNode }) => {
   const [speaker, setSpeaker] = React.useState<Speaker | undefined>();
-  const [story, setStory] = React.useState<StoryLine[]>([]);
+  const [story, setStory] = React.useState<Dialogue[]>([]);
   const [argumentLines, setArguments] = React.useState<Argument[]>([]);
 
   const [selectedLine, setSelectedLine] = React.useState<
-    StoryLine | undefined
+    Dialogue | undefined
   >();
   const [selectedIndex, setSelectedIndex] = React.useState<number>(-1);
   const [toggleModify, setToggleModify] = React.useState<boolean>(false);
+
+  const AddDialogue = (newDialogue: Dialogue) => {
+    setStory((prev) => [...prev, newDialogue]);
+  };
 
   function resetModify() {
     setSelectedIndex(-1);
@@ -78,6 +84,7 @@ const StoryProvider = ({ children }: { children: React.ReactNode }) => {
         setToggleModify,
 
         resetModify,
+        AddDialogue,
       }}
     >
       {children}

@@ -25,3 +25,11 @@ export interface Argument {
 }
 export type ArgumentType = "For" | "Against" | "Irrelevant";
 export type ArgumentTax = "Claim" | "Warrant" | "Ground";
+
+export interface Dialogue {
+  lineNum: number;
+  speaker: Speaker;
+  dialogue: string;
+  commands: Command[];
+  arguments: Argument[];
+}

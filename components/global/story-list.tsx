@@ -6,28 +6,16 @@ import { useStoryContext } from "@/providers/story";
 import { Button } from "../ui/button";
 import { Label } from "../ui/label";
 import StoryLineCard from "./story-line";
-import { ModifyLine } from "./modify-line";
 
 const StoryList = () => {
-  const { story, toggleModify, argumentLines } = useStoryContext();
+  const { story, argumentLines } = useStoryContext();
   return (
     <>
-      {toggleModify && <ModifyLine />}
       <div className="col-span-4 flex flex-col h-screen py-6">
         <ScrollArea className="h-full">
           <div className="flex flex-col gap-2 pt-0">
             {story.map((line, idx) => {
-              const selArgument = argumentLines.filter(
-                (d) => d.lineRef === idx
-              );
-              return (
-                <StoryLineCard
-                  key={idx}
-                  line={line}
-                  idx={idx}
-                  selArgument={selArgument}
-                />
-              );
+              return <StoryLineCard key={idx} line={line} idx={idx} />;
             })}
           </div>
         </ScrollArea>
