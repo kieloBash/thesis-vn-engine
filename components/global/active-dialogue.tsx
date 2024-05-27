@@ -1,5 +1,11 @@
 "use client";
-import React, { FormEvent, useState, KeyboardEvent, useEffect } from "react";
+import React, {
+  FormEvent,
+  useState,
+  KeyboardEvent,
+  useEffect,
+  useMemo,
+} from "react";
 import {
   Argument,
   ArgumentTax,
@@ -68,6 +74,22 @@ const ActiveDialogue = () => {
 
   const [error, setError] = useState("");
 
+  const uniqueArgumentIds = useMemo(() => {
+    const idSet = new Set<string>();
+
+    story.forEach((dialogue) => {
+      dialogue.arguments.forEach((argument) => {
+        idSet.add(argument.id);
+      });
+    });
+
+    currArgs.forEach((argument) => {
+      idSet.add(argument.id);
+    });
+
+    return Array.from(idSet);
+  }, [story, currArgs]);
+
   function handleKeyDown(event: KeyboardEvent<HTMLTextAreaElement>) {
     if (event.key === "Enter" && !event.shiftKey) {
       if (speaker && currDialogue !== "") {
@@ -102,8 +124,8 @@ const ActiveDialogue = () => {
       ) {
         if (arg_key === "") {
           setError("Must have a claim key");
-        } else if (!arg_type) {
-          setError("Please select a type (For,Against,Irrelevant)");
+        } else if (!arg_type && arg_tax === "Claim") {
+          setError("Claim arguments needs a type (For,Against,Irrelevant)");
         } else if (!arg_tax) {
           setError("Please select a taxonomy (Claim,Warrant,Ground)");
         } else if (arg_connectorkey === "" && arg_tax !== "Claim") {
@@ -121,7 +143,7 @@ const ActiveDialogue = () => {
   }
   function AddArgument() {
     const newArg: Argument = {
-      lineRef: story.length,
+      lineRef: selectedIndex,
       id: arg_key,
       line: arg_line,
       tax: arg_tax as ArgumentTax,
@@ -267,40 +289,6 @@ const ActiveDialogue = () => {
               onChange={(e) => setArg_line(e.target.value)}
             />
             <div className="w-full grid grid-cols-2 gap-2">
-              <Input
-                placeholder="Enter claim key..."
-                value={arg_key}
-                onChange={(e) => setArg_key(e.target.value)}
-              />
-              <Input
-                placeholder="Enter connector key..."
-                value={arg_connectorkey}
-                onChange={(e) => setArg_connectorkey(e.target.value)}
-              />
-            </div>
-            <div className="w-full grid grid-cols-2 gap-2">
-              <Select
-                value={arg_type}
-                onValueChange={(e) => {
-                  setArg_type(e as ArgumentType);
-                }}
-              >
-                <SelectTrigger className="w-full">
-                  <SelectValue placeholder="Select a Type" />
-                </SelectTrigger>
-                <SelectContent id="type">
-                  <SelectGroup>
-                    <SelectLabel>TYPE</SelectLabel>
-                    {ARG_TYPE.map((data, idx) => {
-                      return (
-                        <SelectItem key={idx} value={data}>
-                          {data}
-                        </SelectItem>
-                      );
-                    })}
-                  </SelectGroup>
-                </SelectContent>
-              </Select>
               <Select
                 value={arg_tax}
                 onValueChange={(e) => {
@@ -323,6 +311,80 @@ const ActiveDialogue = () => {
                   </SelectGroup>
                 </SelectContent>
               </Select>
+              {arg_tax === "Claim" ? (
+                <>
+                  <Input
+                    placeholder="Enter claim key..."
+                    value={arg_key}
+                    onChange={(e) => setArg_key(e.target.value)}
+                  />
+                </>
+              ) : null}
+              {arg_tax === "Warrant" || arg_tax === "Ground" ? (
+                <>
+                  <>
+                    <Select
+                      value={arg_key}
+                      onValueChange={(e) => {
+                        setArg_key(e);
+                      }}
+                    >
+                      <SelectTrigger className="w-full">
+                        <SelectValue placeholder="Select a Claim Key" />
+                      </SelectTrigger>
+                      <SelectContent id="claimKey">
+                        <SelectGroup>
+                          <SelectLabel>CLAIM KEY</SelectLabel>
+                          {uniqueArgumentIds.map((data, idx) => {
+                            return (
+                              <SelectItem key={idx} value={data}>
+                                {data}
+                              </SelectItem>
+                            );
+                          })}
+                        </SelectGroup>
+                      </SelectContent>
+                    </Select>
+                  </>
+                </>
+              ) : null}
+            </div>
+            <div className="w-full grid gap-2">
+              {arg_tax === "Warrant" || arg_tax === "Ground" ? (
+                <>
+                  <Input
+                    placeholder="Enter connector key..."
+                    value={arg_connectorkey}
+                    onChange={(e) => setArg_connectorkey(e.target.value)}
+                  />
+                </>
+              ) : null}
+              {arg_tax === "Claim" ? (
+                <>
+                  <Select
+                    value={arg_type}
+                    onValueChange={(e) => {
+                      setArg_type(e as ArgumentType);
+                    }}
+                  >
+                    <SelectTrigger className="w-full">
+                      <SelectValue placeholder="Select a Type" />
+                    </SelectTrigger>
+                    <SelectContent id="type">
+                      <SelectGroup>
+                        <SelectLabel>TYPE</SelectLabel>
+                        {ARG_TYPE.map((data, idx) => {
+                          return (
+                            <SelectItem key={idx} value={data}>
+                              {data}
+                            </SelectItem>
+                          );
+                        })}
+                      </SelectGroup>
+                    </SelectContent>
+                  </Select>
+                </>
+              ) : null}
             </div>
             <div className="w-full">
               <Button

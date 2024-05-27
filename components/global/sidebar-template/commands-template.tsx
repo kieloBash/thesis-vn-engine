@@ -29,7 +29,7 @@ const MoreCommands = () => {
                 }}
               >
                 <div className="w-full">
-                  <h3 className="font-bold text-lg text-left">{com.name}()</h3>
+                  <h3 className="font-semibold text-lg text-left">{com.name}()</h3>
                 </div>
               </button>
             );

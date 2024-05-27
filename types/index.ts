@@ -33,7 +33,7 @@ export interface Argument {
   lineRef: number;
   id: string; //CONNECT TO CLAIM
 
-  type: ArgumentType;
+  type?: ArgumentType;
   tax: ArgumentTax;
   argumentKey?: string;
   line: string;
