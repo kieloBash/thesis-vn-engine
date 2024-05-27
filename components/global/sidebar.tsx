@@ -13,6 +13,7 @@ import { useSidebarContext } from "@/providers/sidebar";
 import clsx from "clsx";
 import { SidebarButtonsType } from "@/types";
 import MoreCharacters from "./character-template";
+import MoreBackgrounds from "./background-template";
 
 const Sidebar = () => {
   const BTNS = [
@@ -61,7 +62,7 @@ const Sidebar = () => {
           {active === "Characters" ? (
             <MoreCharacters />
           ) : active === "Background" ? (
-            ""
+            <MoreBackgrounds />
           ) : (
             ""
           )}

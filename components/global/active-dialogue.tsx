@@ -1,5 +1,5 @@
 "use client";
-import React, { FormEvent, useState, KeyboardEvent } from "react";
+import React, { FormEvent, useState, KeyboardEvent, useEffect } from "react";
 import {
   Argument,
   ArgumentTax,
@@ -27,7 +27,9 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { ARG_TAX, ARG_TYPE, CHARACTERS } from "@/constants";
+import { ARG_TAX, ARG_TYPE, BACKGROUNDS, CHARACTERS } from "@/constants";
+import { isBackgroundCommand } from "@/helpers";
+import BackgroundCommand from "./active/background";
 
 const ActiveDialogue = () => {
   const { speaker, story, selectedIndex, setStory, resetModify, selectedLine } =
@@ -44,6 +46,15 @@ const ActiveDialogue = () => {
   const [currArgs, setcurrArgs] = useState<Argument[]>(
     selectedLine?.arguments || []
   );
+
+  useEffect(() => {
+    if (selectedLine) {
+      setcurrSpeaker(selectedLine?.speaker);
+      setcurrDialogue(selectedLine?.dialogue || "");
+      setcurrCommands(selectedLine?.commands || []);
+      setcurrArgs(selectedLine?.arguments || []);
+    }
+  }, [selectedLine, selectedIndex]);
 
   const [arg_line, setArg_line] = useState("");
   const [arg_key, setArg_key] = useState("");
@@ -135,6 +146,7 @@ const ActiveDialogue = () => {
       dialogue: currDialogue,
       commands: currCommands,
       arguments: currArgs,
+      type: "FullDialogue",
     };
 
     let newStory = [...story];
@@ -157,6 +169,15 @@ const ActiveDialogue = () => {
 
     resetForm();
     resetModify();
+  }
+
+  // IF BACKGROUND COMMAND
+  if (
+    selectedLine &&
+    selectedLine.commands.length > 0 &&
+    isBackgroundCommand(selectedLine.commands[0])
+  ) {
+    return <BackgroundCommand command={selectedLine.commands[0]} />;
   }
 
   return (

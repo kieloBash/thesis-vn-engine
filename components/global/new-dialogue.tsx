@@ -126,6 +126,7 @@ const NewDialogue = () => {
       dialogue: currDialogue,
       commands: currCommands,
       arguments: currArgs,
+      type: "FullDialogue",
     };
 
     AddDialogue(newDialogue);
