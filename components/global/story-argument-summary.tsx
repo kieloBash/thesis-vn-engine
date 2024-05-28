@@ -3,33 +3,49 @@ import React, { useMemo } from "react";
 import { Label } from "@/components/ui/label";
 import { useStoryContext } from "@/providers/story";
 import { Button } from "@/components/ui/button";
+import { ArgumentSummaryModal } from "./argument-summary/argument-summary-modal";
+import { Argument } from "@/types";
 
 const StoryArgumentSummary = () => {
   const { story } = useStoryContext();
-  const claimArguments = useMemo(() => {
-    return story.flatMap((dialogue) =>
-      dialogue.arguments.filter((argument) => argument.tax === "Claim")
-    );
+  const { claimArguments, warrantArguments, groundArguments } = useMemo(() => {
+    const claims: Argument[] = [];
+    const warrants: Argument[] = [];
+    const grounds: Argument[] = [];
+
+    story.forEach((dialogue) => {
+      dialogue.arguments.forEach((argument) => {
+        switch (argument.tax) {
+          case "Claim":
+            claims.push(argument);
+            break;
+          case "Warrant":
+            warrants.push(argument);
+            break;
+          case "Ground":
+            grounds.push(argument);
+            break;
+          default:
+            break;
+        }
+      });
+    });
+
+    return {
+      claimArguments: claims,
+      warrantArguments: warrants,
+      groundArguments: grounds,
+    };
   }, [story]);
-  const warrantArguments = useMemo(() => {
-    return story.flatMap((dialogue) =>
-      dialogue.arguments.filter((argument) => argument.tax === "Warrant")
-    );
-  }, [story]);
-  const groundArguments = useMemo(() => {
-    return story.flatMap((dialogue) =>
-      dialogue.arguments.filter((argument) => argument.tax === "Ground")
-    );
-  }, [story]);
-  console.log(claimArguments)
-  console.log(warrantArguments)
-  console.log(groundArguments)
 
   return (
     <div className="bg-background/95 p-4 backdrop-blur flex justify-between items-center text-sm">
       <div className="flex gap-1 items-start justify-center flex-col">
         <div className="flex flex-col gap-1">
-          <Label className="">ARGUMENTS</Label>
+          <div className="flex gap-2 items-center justify-start">
+            <Label className="">COMPLETE ARGUMENTS</Label>
+            <span className="">0/10</span>
+          </div>
           <div className="flex gap-2">
             <p className="">
               Claim: <span className="font-bold">{claimArguments?.length}</span>
@@ -46,9 +62,7 @@ const StoryArgumentSummary = () => {
         </div>
       </div>
       <div className="flex gap-2 justify-center items-center">
-        <Button type="button" size={"sm"}>
-          View
-        </Button>
+        <ArgumentSummaryModal />
         <Button type="button" size={"sm"}>
           Create Story
         </Button>
