@@ -42,6 +42,8 @@ import {
 import useDisplayArg from "@/components/hooks/useDisplayArg";
 import { TooltipButton } from "../tooltip-btn";
 import { PlusIcon, Trash2Icon } from "lucide-react";
+import BackgroundCommandTemplate from "../active/background";
+import { isBackgroundCommand } from "@/helpers";
 
 const ActiveDialogue = () => {
   const {
@@ -314,6 +316,15 @@ const ActiveDialogue = () => {
 
     resetForm();
     resetModify();
+  }
+
+  // IF BACKGROUND COMMAND
+  if (
+    selectedLine &&
+    selectedLine.commands.length > 0 &&
+    isBackgroundCommand(selectedLine.commands[0])
+  ) {
+    return <BackgroundCommandTemplate command={selectedLine.commands[0]} />;
   }
 
   return (
