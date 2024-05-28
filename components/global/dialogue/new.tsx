@@ -1,5 +1,11 @@
 "use client";
-import React, { FormEvent, useState, KeyboardEvent, useMemo } from "react";
+import React, {
+  FormEvent,
+  useState,
+  KeyboardEvent,
+  useMemo,
+  useEffect,
+} from "react";
 import {
   Argument,
   ArgumentTax,
@@ -9,15 +15,13 @@ import {
 } from "@/types";
 
 // UI
-import { Separator } from "../ui/separator";
-import { TooltipButton } from "./tooltip-btn";
-import { Button } from "../ui/button";
-import { PlusIcon, Trash2Icon } from "lucide-react";
+import { Separator } from "@/components/ui/separator";
+import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useStoryContext } from "@/providers/story";
-import { Label } from "../ui/label";
-import { Textarea } from "../ui/textarea";
-import { Input } from "../ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Input } from "@/components/ui/input";
 import {
   Select,
   SelectContent,
@@ -28,13 +32,27 @@ import {
   SelectValue,
 } from "@/components/ui/select";
 import { ARG_TAX, ARG_TYPE } from "@/constants";
+import {
+  ArgumentChain,
+  ArgumentTaxEnum,
+  ArgumentTypeEnum,
+  DisplayArg,
+  FullArgument,
+} from "@/types/new-types";
+import useDisplayArg from "@/components/hooks/useDisplayArg";
 
 const NewDialogue = () => {
-  const { speaker, story, AddDialogue, resetModify } = useStoryContext();
+  const {
+    speaker,
+    story,
+    AddDialogue,
+    resetModify,
+    argumentLines,
+    setArguments,
+  } = useStoryContext();
 
   const [currDialogue, setcurrDialogue] = useState("");
   const [currCommands, setcurrCommands] = useState<Command[]>([]);
-  const [currArgs, setcurrArgs] = useState<Argument[]>([]);
 
   const [arg_line, setArg_line] = useState("");
   const [arg_key, setArg_key] = useState("");
@@ -46,23 +64,30 @@ const NewDialogue = () => {
     undefined
   );
 
+  const [fullArguments, setfullArguments] =
+    useState<FullArgument[]>(argumentLines);
+  useEffect(() => {
+    setfullArguments(argumentLines);
+  }, [argumentLines]);
+
   const [error, setError] = useState("");
 
-  const uniqueArgumentIds = useMemo(() => {
-    const idSet = new Set<string>();
+  const claimKeys = useMemo(() => {
+    const idKeys = new Set<string>();
 
     story.forEach((dialogue) => {
       dialogue.arguments.forEach((argument) => {
-        idSet.add(argument.id);
+        idKeys.add(argument.claimKey);
       });
     });
 
-    currArgs.forEach((argument) => {
-      idSet.add(argument.id);
+    fullArguments.forEach((argument) => {
+      idKeys.add(argument.claimKey);
     });
+    return Array.from(idKeys);
+  }, [story, fullArguments]);
 
-    return Array.from(idSet);
-  }, [story, currArgs]);
+  const dialogue_arguments = useDisplayArg({ story, args: fullArguments });
 
   function handleKeyDown(event: KeyboardEvent<HTMLTextAreaElement>) {
     if (event.key === "Enter" && !event.shiftKey) {
@@ -80,13 +105,20 @@ const NewDialogue = () => {
   function resetForm() {
     setcurrDialogue("");
     setcurrCommands([]);
-    setcurrArgs([]);
+    setfullArguments([]);
 
     setArg_line("");
     setArg_key("");
     setArg_connectorkey("");
     setArg_tax(undefined);
     setArg_type(undefined);
+  }
+  function resetArgForm() {
+    setArg_line("");
+    setArg_key("");
+    setArg_connectorkey("");
+    setArg_tax("");
+    setArg_type("");
   }
 
   function handleAddArgument() {
@@ -107,8 +139,8 @@ const NewDialogue = () => {
         } else if (!speaker) {
           setError("Please select a speaker");
         } else {
-          AddArgument();
           setError("");
+          AddArgument();
         }
       } else {
         setError("Argument must be in the dialogue");
@@ -116,21 +148,114 @@ const NewDialogue = () => {
     }
   }
   function AddArgument() {
-    const newArg: Argument = {
+    if (arg_tax === "Claim") {
+      AddClaimArgument();
+    } else if (arg_tax === "Warrant") {
+      AddWarrantGroundArgument("warrant");
+    } else if (arg_tax === "Ground") {
+      AddWarrantGroundArgument("ground");
+    }
+  }
+  function AddClaimArgument() {
+    if (claimKeys.includes(arg_key)) {
+      setError("Already have a claim on that key!");
+      return;
+    }
+    const newFullArgument: FullArgument = {
       lineRef: story.length,
-      id: arg_key,
-      line: arg_line,
-      tax: arg_tax as ArgumentTax,
-      type: arg_type as ArgumentType,
-      argumentKey: arg_connectorkey,
+      claimKey: arg_key,
+      claimText: arg_line,
+      type:
+        arg_type === "For"
+          ? ArgumentTypeEnum.FOR
+          : arg_type === "Against"
+          ? ArgumentTypeEnum.AGAINST
+          : ArgumentTypeEnum.IRRELEVANT,
+      tax:
+        arg_tax === "Claim"
+          ? ArgumentTaxEnum.CLAIM
+          : arg_type === "Warrant"
+          ? ArgumentTaxEnum.WARRANT
+          : ArgumentTaxEnum.GROUND,
+      chain: [],
     };
+    setfullArguments((prev) => [...prev, newFullArgument]);
+    resetArgForm();
+  }
 
-    setcurrArgs((prev) => [...prev, newArg]);
-    setArg_line("");
-    setArg_key("");
-    setArg_connectorkey("");
-    setArg_tax("");
-    setArg_type("");
+  function AddWarrantGroundArgument(ww: "warrant" | "ground") {
+    let newFullArguments = [...fullArguments];
+    let argIndex = newFullArguments.findIndex((d) => d.claimKey === arg_key);
+
+    if (argIndex === -1) {
+      console.log("No Found Claim");
+      return;
+    } // no found claim
+
+    let foundArg = newFullArguments[argIndex];
+    const chainIndex = foundArg.chain.findIndex(
+      (d) => d.connectorKey === arg_connectorkey
+    );
+    let foundChain: ArgumentChain | undefined;
+    if (chainIndex === -1) {
+      // no chain yet
+      if (ww === "warrant") {
+        foundChain = {
+          connectorKey: arg_connectorkey,
+          warrant: {
+            lineRef: story.length,
+            connectorKey: arg_connectorkey,
+            text: arg_line,
+            tax: "warrant" as any,
+          },
+        };
+      } else {
+        foundChain = {
+          connectorKey: arg_connectorkey,
+          ground: {
+            lineRef: story.length,
+            connectorKey: arg_connectorkey,
+            text: arg_line,
+            tax: "ground" as any,
+          },
+        };
+      }
+      foundArg.chain.push(foundChain);
+    } else {
+      foundChain = foundArg.chain[chainIndex];
+
+      if (ww === "warrant") {
+        if (!foundChain.warrant)
+          foundChain.warrant = {
+            lineRef: story.length,
+            connectorKey: arg_connectorkey,
+            text: arg_line,
+            tax: "warrant" as any,
+          };
+        else {
+          setError("Already existing warrant on the chain connector");
+          return;
+        }
+      } else {
+        if (!foundChain.ground)
+          foundChain.ground = {
+            lineRef: story.length,
+            connectorKey: arg_connectorkey,
+            text: arg_line,
+            tax: "ground" as any,
+          };
+        else {
+          setError("Already existing ground on the chain connector");
+          return;
+        }
+      }
+      foundArg.chain[chainIndex] = foundChain;
+    }
+    //new chain
+
+    newFullArguments[argIndex] = foundArg;
+    setfullArguments(newFullArguments);
+    resetArgForm();
   }
 
   function AddNewDialogue() {
@@ -141,13 +266,15 @@ const NewDialogue = () => {
       speaker,
       dialogue: currDialogue,
       commands: currCommands,
-      arguments: currArgs,
+      arguments: fullArguments,
       type: "FullDialogue",
     };
 
     AddDialogue(newDialogue);
+    setArguments(fullArguments);
     resetModify();
     resetForm();
+    resetArgForm();
   }
 
   function handleSubmitNewStoryLine(e: FormEvent) {
@@ -247,12 +374,12 @@ const NewDialogue = () => {
                       }}
                     >
                       <SelectTrigger className="w-full">
-                        <SelectValue placeholder="Select a Taxonomy" />
+                        <SelectValue placeholder="Select a Claim Key" />
                       </SelectTrigger>
-                      <SelectContent id="tax">
+                      <SelectContent id="claimKey">
                         <SelectGroup>
-                          <SelectLabel>TAXONOMY</SelectLabel>
-                          {uniqueArgumentIds.map((data, idx) => {
+                          <SelectLabel>CLAIM KEY</SelectLabel>
+                          {claimKeys.map((data, idx) => {
                             return (
                               <SelectItem key={idx} value={data}>
                                 {data}
@@ -322,26 +449,29 @@ const NewDialogue = () => {
                   <span className="">{speaker?.name.split(" ")[0]}</span>{" "}
                   <span className="">&ldquo;{currDialogue}&ldquo;</span>
                   <div className="flex flex-wrap gap-0.5 text-xs">
-                    {currArgs.map((arg, idx) => {
-                      const textToDisplay = `${arg.lineRef},${arg.id},${
-                        arg.tax
-                      },${arg.type},"${arg.line}"${
-                        arg.argumentKey !== "" ? `,${arg.argumentKey}` : ""
-                      }`;
-                      return (
-                        <button
-                          type="button"
-                          onClick={() => {
-                            let newArgs = [...currArgs];
-                            newArgs.splice(idx, 1);
-                            setcurrArgs(newArgs);
-                          }}
-                          className="p-1 bg-slate-100 rounded-md hover:bg-slate-50 transition-colors"
-                          key={idx}
-                        >
-                          AddArgument({textToDisplay})
-                        </button>
-                      );
+                    {dialogue_arguments.map((d, idx) => {
+                      if (d.tax === ArgumentTaxEnum.CLAIM)
+                        return (
+                          <span
+                            className="px-2 py-1 bg-slate-100 rounded-full"
+                            key={idx}
+                          >
+                            AddClaim(&ldquo;{d.claimKey}&ldquo;,&ldquo;{d.text}
+                            &ldquo;,{d.type},{d.tax})
+                          </span>
+                        );
+                      else {
+                        return (
+                          <span
+                            className="px-2 py-1 bg-slate-100 rounded-full"
+                            key={idx}
+                          >
+                            AddChainArg(&ldquo;{d.claimKey}&ldquo;,&ldquo;
+                            {d?.connectorKey}&ldquo;,&ldquo;{d.text}
+                            &ldquo;,{d.tax})
+                          </span>
+                        );
+                      }
                     })}
                   </div>
                 </p>

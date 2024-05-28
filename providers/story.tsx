@@ -1,5 +1,6 @@
 "use client";
 import { Argument, Speaker, Dialogue } from "@/types";
+import { FullArgument } from "@/types/new-types";
 import * as React from "react";
 
 type ContextType = {
@@ -7,8 +8,8 @@ type ContextType = {
   setSpeaker: (temp: Speaker | undefined) => void;
   story: Dialogue[];
   setStory: (temp: Dialogue[]) => void;
-  argumentLines: Argument[];
-  setArguments: (temp: Argument[]) => void;
+  argumentLines: FullArgument[];
+  setArguments: (temp: FullArgument[]) => void;
 
   selectedLine: Dialogue | undefined;
   setSelectedLine: (temp: Dialogue | undefined) => void;
@@ -28,7 +29,7 @@ const Context = React.createContext<ContextType>({
   story: [],
   setStory: (temp: Dialogue[]) => {},
   argumentLines: [],
-  setArguments: (temp: Argument[]) => {},
+  setArguments: (temp: FullArgument[]) => {},
 
   selectedLine: undefined,
   setSelectedLine: (temp: Dialogue | undefined) => {},
@@ -47,7 +48,7 @@ export const useStoryContext = () => React.useContext(Context);
 const StoryProvider = ({ children }: { children: React.ReactNode }) => {
   const [speaker, setSpeaker] = React.useState<Speaker | undefined>();
   const [story, setStory] = React.useState<Dialogue[]>([]);
-  const [argumentLines, setArguments] = React.useState<Argument[]>([]);
+  const [argumentLines, setArguments] = React.useState<FullArgument[]>([]);
 
   const [selectedLine, setSelectedLine] = React.useState<
     Dialogue | undefined

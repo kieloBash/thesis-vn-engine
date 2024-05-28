@@ -7,16 +7,31 @@ import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 import clsx from "clsx";
 import { isBackgroundCommand } from "@/helpers";
+import useDisplayArg from "../hooks/useDisplayArg";
+import { ArgumentTaxEnum } from "@/types/new-types";
 
 const StoryLineCard = ({ line, idx }: { line: Dialogue; idx: number }) => {
-  const { setToggleModify, setSelectedLine, setSelectedIndex, selectedIndex } =
-    useStoryContext();
+  const {
+    setToggleModify,
+    setSelectedLine,
+    setSelectedIndex,
+    selectedIndex,
+    argumentLines,
+    story,
+  } = useStoryContext();
   const activeClassName = clsx(
     "flex flex-col items-start gap-2 rounded-lg border p-3 text-left text-sm transition-all ",
     selectedIndex === idx
       ? "bg-main-300 text-white"
       : "bg-white hover:bg-accent"
   );
+
+  const dialogue_arguments = useDisplayArg({
+    story,
+    args: argumentLines,
+    variant: "Active",
+    idx,
+  });
 
   if (line.commands.length > 0 && isBackgroundCommand(line.commands[0]))
     return (
@@ -97,16 +112,25 @@ const StoryLineCard = ({ line, idx }: { line: Dialogue; idx: number }) => {
         <div className="line-clamp-2 text-xs text-muted-foreground">
           {line.dialogue.substring(0, 300)}
         </div>
-        <div className="flex gap-2">
-          {line.arguments.length ? (
-            <div className="flex items-center gap-2">
-              {line.arguments.map((arg, idx) => (
-                <Badge key={idx} variant={"default"}>
-                  {arg.tax}/{arg.type}: {arg.line.substring(0, 24)}
-                </Badge>
-              ))}
-            </div>
-          ) : null}
+        <div className="flex flex-wrap gap-0.5 font-mono">
+          {dialogue_arguments.map((d, idx) => {
+            if (d.tax === ArgumentTaxEnum.CLAIM)
+              return (
+                <span className="px-2 py-1 bg-black text-white text-xs rounded-full" key={idx}>
+                  AddClaim(&ldquo;{d.claimKey}&ldquo;,&ldquo;{d.text}
+                  &ldquo;,{d.type},{d.tax})
+                </span>
+              );
+            else {
+              return (
+                <span className="px-2 py-1 bg-black text-white text-xs rounded-full" key={idx}>
+                  AddChainArg(&ldquo;{d.claimKey}&ldquo;,&ldquo;
+                  {d?.connectorKey}&ldquo;,&ldquo;{d.text}
+                  &ldquo;,{d.tax})
+                </span>
+              );
+            }
+          })}
         </div>
       </button>
     );

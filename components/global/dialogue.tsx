@@ -2,8 +2,8 @@
 import { useStoryContext } from "@/providers/story";
 import React from "react";
 
-import NewDialogue from "./new-dialogue";
-import ActiveDialogue from "./active-dialogue";
+import NewDialogue from "./dialogue/new";
+import ActiveDialogue from "./dialogue/active";
 
 const Dialogue = () => {
   const { toggleModify, selectedIndex, selectedLine } = useStoryContext();

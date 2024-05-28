@@ -7,7 +7,7 @@ import StoryLineCard from "./story-line";
 import StoryArgumentSummary from "./story-argument-summary";
 
 const StoryList = () => {
-  const { story, argumentLines } = useStoryContext();
+  const { story } = useStoryContext();
   return (
     <>
       <div className="col-span-4 flex flex-col h-screen py-6">

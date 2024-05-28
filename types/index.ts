@@ -1,3 +1,5 @@
+import { FullArgument } from "./new-types";
+
 export type SidebarButtonsType = "Characters" | "Background" | "Commands";
 export interface StoryLine {
   speaker: Speaker;
@@ -46,7 +48,7 @@ export interface Dialogue {
   speaker?: Speaker;
   dialogue?: string;
   commands: Command[];
-  arguments: Argument[];
+  arguments: FullArgument[];
 
   type: DialogueType;
 }

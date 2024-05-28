@@ -3,8 +3,8 @@ import React, {
   FormEvent,
   useState,
   KeyboardEvent,
-  useEffect,
   useMemo,
+  useEffect,
 } from "react";
 import {
   Argument,
@@ -15,15 +15,13 @@ import {
 } from "@/types";
 
 // UI
-import { Separator } from "../ui/separator";
-import { TooltipButton } from "./tooltip-btn";
-import { Button } from "../ui/button";
-import { PlusIcon, Trash2Icon } from "lucide-react";
+import { Separator } from "@/components/ui/separator";
+import { Button } from "@/components/ui/button";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { useStoryContext } from "@/providers/story";
-import { Label } from "../ui/label";
-import { Textarea } from "../ui/textarea";
-import { Input } from "../ui/input";
+import { Label } from "@/components/ui/label";
+import { Textarea } from "@/components/ui/textarea";
+import { Input } from "@/components/ui/input";
 import {
   Select,
   SelectContent,
@@ -33,15 +31,30 @@ import {
   SelectTrigger,
   SelectValue,
 } from "@/components/ui/select";
-import { ARG_TAX, ARG_TYPE, BACKGROUNDS, CHARACTERS } from "@/constants";
-import { isBackgroundCommand } from "@/helpers";
-import BackgroundCommand from "./active/background";
+import { ARG_TAX, ARG_TYPE, CHARACTERS } from "@/constants";
+import {
+  ArgumentChain,
+  ArgumentTaxEnum,
+  ArgumentTypeEnum,
+  DisplayArg,
+  FullArgument,
+} from "@/types/new-types";
+import useDisplayArg from "@/components/hooks/useDisplayArg";
+import { TooltipButton } from "../tooltip-btn";
+import { PlusIcon, Trash2Icon } from "lucide-react";
 
 const ActiveDialogue = () => {
-  const { speaker, story, selectedIndex, setStory, resetModify, selectedLine } =
-    useStoryContext();
-
-  const [currSpeaker, setcurrSpeaker] = useState(selectedLine?.speaker);
+  const {
+    speaker,
+    story,
+    AddDialogue,
+    resetModify,
+    argumentLines,
+    setArguments,
+    selectedIndex,
+    selectedLine,
+    setStory,
+  } = useStoryContext();
 
   const [currDialogue, setcurrDialogue] = useState(
     selectedLine?.dialogue || ""
@@ -49,18 +62,7 @@ const ActiveDialogue = () => {
   const [currCommands, setcurrCommands] = useState<Command[]>(
     selectedLine?.commands || []
   );
-  const [currArgs, setcurrArgs] = useState<Argument[]>(
-    selectedLine?.arguments || []
-  );
-
-  useEffect(() => {
-    if (selectedLine) {
-      setcurrSpeaker(selectedLine?.speaker);
-      setcurrDialogue(selectedLine?.dialogue || "");
-      setcurrCommands(selectedLine?.commands || []);
-      setcurrArgs(selectedLine?.arguments || []);
-    }
-  }, [selectedLine, selectedIndex]);
+  const [currSpeaker, setcurrSpeaker] = useState(selectedLine?.speaker);
 
   const [arg_line, setArg_line] = useState("");
   const [arg_key, setArg_key] = useState("");
@@ -72,23 +74,43 @@ const ActiveDialogue = () => {
     undefined
   );
 
+  const [fullArguments, setfullArguments] =
+    useState<FullArgument[]>(argumentLines);
+  useEffect(() => {
+    setfullArguments(argumentLines);
+  }, [argumentLines]);
+
+  useEffect(() => {
+    if (selectedLine) {
+      setcurrSpeaker(selectedLine?.speaker);
+      setcurrDialogue(selectedLine?.dialogue || "");
+      setcurrCommands(selectedLine?.commands || []);
+    }
+  }, [selectedLine, selectedIndex]);
+
   const [error, setError] = useState("");
 
-  const uniqueArgumentIds = useMemo(() => {
-    const idSet = new Set<string>();
+  const claimKeys = useMemo(() => {
+    const idKeys = new Set<string>();
 
     story.forEach((dialogue) => {
       dialogue.arguments.forEach((argument) => {
-        idSet.add(argument.id);
+        idKeys.add(argument.claimKey);
       });
     });
 
-    currArgs.forEach((argument) => {
-      idSet.add(argument.id);
+    fullArguments.forEach((argument) => {
+      idKeys.add(argument.claimKey);
     });
+    return Array.from(idKeys);
+  }, [story, fullArguments]);
 
-    return Array.from(idSet);
-  }, [story, currArgs]);
+  const dialogue_arguments = useDisplayArg({
+    story,
+    args: fullArguments,
+    variant: "Active",
+    idx: selectedIndex,
+  });
 
   function handleKeyDown(event: KeyboardEvent<HTMLTextAreaElement>) {
     if (event.key === "Enter" && !event.shiftKey) {
@@ -106,13 +128,20 @@ const ActiveDialogue = () => {
   function resetForm() {
     setcurrDialogue("");
     setcurrCommands([]);
-    setcurrArgs([]);
+    setfullArguments([]);
 
     setArg_line("");
     setArg_key("");
     setArg_connectorkey("");
     setArg_tax(undefined);
     setArg_type(undefined);
+  }
+  function resetArgForm() {
+    setArg_line("");
+    setArg_key("");
+    setArg_connectorkey("");
+    setArg_tax("");
+    setArg_type("");
   }
 
   function handleAddArgument() {
@@ -133,8 +162,8 @@ const ActiveDialogue = () => {
         } else if (!speaker) {
           setError("Please select a speaker");
         } else {
-          AddArgument();
           setError("");
+          AddArgument();
         }
       } else {
         setError("Argument must be in the dialogue");
@@ -142,32 +171,125 @@ const ActiveDialogue = () => {
     }
   }
   function AddArgument() {
-    const newArg: Argument = {
+    if (arg_tax === "Claim") {
+      AddClaimArgument();
+    } else if (arg_tax === "Warrant") {
+      AddWarrantGroundArgument("warrant");
+    } else if (arg_tax === "Ground") {
+      AddWarrantGroundArgument("ground");
+    }
+  }
+  function AddClaimArgument() {
+    if (claimKeys.includes(arg_key)) {
+      setError("Already have a claim on that key!");
+      return;
+    }
+    const newFullArgument: FullArgument = {
       lineRef: selectedIndex,
-      id: arg_key,
-      line: arg_line,
-      tax: arg_tax as ArgumentTax,
-      type: arg_type as ArgumentType,
-      argumentKey: arg_connectorkey,
+      claimKey: arg_key,
+      claimText: arg_line,
+      type:
+        arg_type === "For"
+          ? ArgumentTypeEnum.FOR
+          : arg_type === "Against"
+          ? ArgumentTypeEnum.AGAINST
+          : ArgumentTypeEnum.IRRELEVANT,
+      tax:
+        arg_tax === "Claim"
+          ? ArgumentTaxEnum.CLAIM
+          : arg_type === "Warrant"
+          ? ArgumentTaxEnum.WARRANT
+          : ArgumentTaxEnum.GROUND,
+      chain: [],
     };
-
-    setcurrArgs((prev) => [...prev, newArg]);
-    setArg_line("");
-    setArg_key("");
-    setArg_connectorkey("");
-    setArg_tax("");
-    setArg_type("");
+    setfullArguments((prev) => [...prev, newFullArgument]);
+    resetArgForm();
   }
 
-  function AddNewDialogue() {
-    if (!currSpeaker) return null;
+  function AddWarrantGroundArgument(ww: "warrant" | "ground") {
+    let newFullArguments = [...fullArguments];
+    let argIndex = newFullArguments.findIndex((d) => d.claimKey === arg_key);
+
+    if (argIndex === -1) {
+      console.log("No Found Claim");
+      return;
+    } // no found claim
+
+    let foundArg = newFullArguments[argIndex];
+    const chainIndex = foundArg.chain.findIndex(
+      (d) => d.connectorKey === arg_connectorkey
+    );
+    let foundChain: ArgumentChain | undefined;
+    if (chainIndex === -1) {
+      // no chain yet
+      if (ww === "warrant") {
+        foundChain = {
+          connectorKey: arg_connectorkey,
+          warrant: {
+            lineRef: selectedIndex,
+            connectorKey: arg_connectorkey,
+            text: arg_line,
+            tax: "warrant" as any,
+          },
+        };
+      } else {
+        foundChain = {
+          connectorKey: arg_connectorkey,
+          ground: {
+            lineRef: selectedIndex,
+            connectorKey: arg_connectorkey,
+            text: arg_line,
+            tax: "ground" as any,
+          },
+        };
+      }
+      foundArg.chain.push(foundChain);
+    } else {
+      foundChain = foundArg.chain[chainIndex];
+
+      if (ww === "warrant") {
+        if (!foundChain.warrant)
+          foundChain.warrant = {
+            lineRef: selectedIndex,
+            connectorKey: arg_connectorkey,
+            text: arg_line,
+            tax: "warrant" as any,
+          };
+        else {
+          setError("Already existing warrant on the chain connector");
+          return;
+        }
+      } else {
+        if (!foundChain.ground)
+          foundChain.ground = {
+            lineRef: selectedIndex,
+            connectorKey: arg_connectorkey,
+            text: arg_line,
+            tax: "ground" as any,
+          };
+        else {
+          setError("Already existing ground on the chain connector");
+          return;
+        }
+      }
+      foundArg.chain[chainIndex] = foundChain;
+    }
+    //new chain
+
+    newFullArguments[argIndex] = foundArg;
+    setfullArguments(newFullArguments);
+    resetArgForm();
+  }
+
+  function SaveChanges() {
+    if (!speaker) return null;
 
     const newDialogue: Dialogue = {
-      lineNum: story.length,
+      lineNum: selectedIndex,
       speaker: currSpeaker,
       dialogue: currDialogue,
       commands: currCommands,
-      arguments: currArgs,
+      arguments: fullArguments,
       type: "FullDialogue",
     };
 
@@ -175,15 +297,16 @@ const ActiveDialogue = () => {
     newStory[selectedIndex] = newDialogue;
     setStory(newStory);
 
+    setArguments(fullArguments);
     resetModify();
     resetForm();
+    resetArgForm();
   }
 
   function handleSubmitNewStoryLine(e: FormEvent) {
     e.preventDefault();
-    AddNewDialogue();
+    SaveChanges();
   }
-
   function handleDeleteDialogue() {
     let newStory = [...story];
     newStory.splice(selectedIndex, 1);
@@ -191,15 +314,6 @@ const ActiveDialogue = () => {
 
     resetForm();
     resetModify();
-  }
-
-  // IF BACKGROUND COMMAND
-  if (
-    selectedLine &&
-    selectedLine.commands.length > 0 &&
-    isBackgroundCommand(selectedLine.commands[0])
-  ) {
-    return <BackgroundCommand command={selectedLine.commands[0]} />;
   }
 
   return (
@@ -335,7 +449,7 @@ const ActiveDialogue = () => {
                       <SelectContent id="claimKey">
                         <SelectGroup>
                           <SelectLabel>CLAIM KEY</SelectLabel>
-                          {uniqueArgumentIds.map((data, idx) => {
+                          {claimKeys.map((data, idx) => {
                             return (
                               <SelectItem key={idx} value={data}>
                                 {data}
@@ -405,26 +519,29 @@ const ActiveDialogue = () => {
                   <span className="">{speaker?.name.split(" ")[0]}</span>{" "}
                   <span className="">&ldquo;{currDialogue}&ldquo;</span>
                   <div className="flex flex-wrap gap-0.5 text-xs">
-                    {currArgs.map((arg, idx) => {
-                      const textToDisplay = `${arg.lineRef},${arg.id},${
-                        arg.tax
-                      },${arg.type},"${arg.line}"${
-                        arg.argumentKey !== "" ? `,${arg.argumentKey}` : ""
-                      }`;
-                      return (
-                        <button
-                          type="button"
-                          onClick={() => {
-                            let newArgs = [...currArgs];
-                            newArgs.splice(idx, 1);
-                            setcurrArgs(newArgs);
-                          }}
-                          className="p-1 bg-slate-100 rounded-md hover:bg-slate-50 transition-colors"
-                          key={idx}
-                        >
-                          AddArgument({textToDisplay})
-                        </button>
-                      );
+                    {dialogue_arguments.map((d, idx) => {
+                      if (d.tax === ArgumentTaxEnum.CLAIM)
+                        return (
+                          <span
+                            className="px-2 py-1 bg-slate-100 rounded-full"
+                            key={idx}
+                          >
+                            AddClaim(&ldquo;{d.claimKey}&ldquo;,&ldquo;{d.text}
+                            &ldquo;,{d.type},{d.tax})
+                          </span>
+                        );
+                      else {
+                        return (
+                          <span
+                            className="px-2 py-1 bg-slate-100 rounded-full"
+                            key={idx}
+                          >
+                            AddChainArg(&ldquo;{d.claimKey}&ldquo;,&ldquo;
+                            {d?.connectorKey}&ldquo;,&ldquo;{d.text}
+                            &ldquo;,{d.tax})
+                          </span>
+                        );
+                      }
                     })}
                   </div>
                 </p>
@@ -439,11 +556,7 @@ const ActiveDialogue = () => {
         </div>
         <Separator className="mt-4" />
         <div className="w-full justify-end gap-1 items-center flex px-4 py-2">
-          <Button
-            size={"sm"}
-            type="submit"
-            disabled={!speaker || currDialogue === ""}
-          >
+          <Button size={"sm"} type="submit">
             Save Changes
           </Button>
         </div>
