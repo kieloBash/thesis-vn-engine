@@ -75,7 +75,8 @@ export const COMMANDS: Command[] = [
   { name: "CharacterMoveRight", type: CommandType.Action, parameters: [] },
   { name: "CharacterMoveUp", type: CommandType.Action, parameters: [] },
   { name: "CharacterMoveLeft", type: CommandType.Action, parameters: [] },
-  { name: "CharacterShrink", type: CommandType.Action, parameters: [] },
   { name: "playtrack", type: CommandType.Audio, parameters: [] },
   { name: "playsoundeffect", type: CommandType.Audio, parameters: [] },
+  { name: "StartNotebookMinigame", type: CommandType.Action, parameters: [] },
+  { name: "StartCardGame", type: CommandType.Action, parameters: [] },
 ];
