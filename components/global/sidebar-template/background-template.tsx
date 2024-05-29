@@ -8,6 +8,7 @@ import { useStoryContext } from "@/providers/story";
 import clsx from "clsx";
 import { BACKGROUNDS } from "@/constants";
 import { BackgroundCommand, CommandType, Dialogue } from "@/types";
+import { generateRandomKey } from "@/helpers";
 
 const MoreBackgrounds = () => {
   const { speaker, story, setStory } = useStoryContext();
@@ -37,7 +38,7 @@ const MoreBackgrounds = () => {
                     bg,
                   };
                   const newBackground: Dialogue = {
-                    lineNum: story.length,
+                    lineNum: generateRandomKey(),
                     commands: [newCommand],
                     arguments: [],
                     type: "CommandOnly",

@@ -40,7 +40,10 @@ const BackgroundCommandTemplate = ({
   }
   function handleDeleteDialogue() {
     let newStory = [...story];
-    newStory.splice(selectedIndex, 1);
+    const index = newStory.findIndex((d) => d.lineNum === selectedIndex);
+    if (index === -1) return;
+
+    newStory.splice(index, 1);
     setStory(newStory);
 
     resetForm();
@@ -63,7 +66,10 @@ const BackgroundCommandTemplate = ({
     newDialogue.commands[0] = newBackgroundCommand;
 
     let newStory = [...story];
-    newStory[selectedIndex] = newDialogue;
+    const index = newStory.findIndex((d) => d.lineNum === selectedIndex);
+    if (index === -1) return;
+
+    newStory[index] = newDialogue;
     setStory(newStory);
 
     resetModify();
