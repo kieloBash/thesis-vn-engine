@@ -32,7 +32,7 @@ export enum ArgumentTaxEnum {
 // }
 
 export interface FullArgument {
-  lineRef: number;
+  lineRef: string;
   claimKey: string;
   claimText: string;
   type: ArgumentTypeEnum;
@@ -45,17 +45,16 @@ export interface ArgumentChain {
   ground?: SingleArgument;
 }
 export interface SingleArgument {
-  lineRef: number;
+  lineRef: string;
   connectorKey: string;
 
   text: string;
   tax: ArgumentTaxEnum;
 }
 export interface DisplayArg {
-    tax: ArgumentTaxEnum;
-    type?: ArgumentTypeEnum;
-    connectorKey?: string;
-    claimKey: string;
-    text: string;
-  }
-  
+  tax: ArgumentTaxEnum;
+  type?: ArgumentTypeEnum;
+  connectorKey?: string;
+  claimKey: string;
+  text: string;
+}

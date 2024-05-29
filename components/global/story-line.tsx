@@ -10,7 +10,7 @@ import { isBackgroundCommand } from "@/helpers";
 import useDisplayArg from "../hooks/useDisplayArg";
 import { ArgumentTaxEnum } from "@/types/new-types";
 
-const StoryLineCard = ({ line, idx }: { line: Dialogue; idx: number }) => {
+const StoryLineCard = ({ line, idx }: { line: Dialogue; idx: string }) => {
   const {
     setToggleModify,
     setSelectedLine,
@@ -27,10 +27,8 @@ const StoryLineCard = ({ line, idx }: { line: Dialogue; idx: number }) => {
   );
 
   const dialogue_arguments = useDisplayArg({
-    story,
     args: argumentLines,
-    variant: "Active",
-    idx,
+    key: idx,
   });
 
   if (line.commands.length > 0 && isBackgroundCommand(line.commands[0]))
@@ -41,7 +39,7 @@ const StoryLineCard = ({ line, idx }: { line: Dialogue; idx: number }) => {
           if (selectedIndex === idx) {
             setToggleModify(false);
             setSelectedLine(undefined);
-            setSelectedIndex(-1);
+            setSelectedIndex("");
           } else {
             setToggleModify(true);
             setSelectedLine(line);
@@ -94,7 +92,7 @@ const StoryLineCard = ({ line, idx }: { line: Dialogue; idx: number }) => {
           if (selectedIndex === idx) {
             setToggleModify(false);
             setSelectedLine(undefined);
-            setSelectedIndex(-1);
+            setSelectedIndex("");
           } else {
             setToggleModify(true);
             setSelectedLine(line);
@@ -116,14 +114,20 @@ const StoryLineCard = ({ line, idx }: { line: Dialogue; idx: number }) => {
           {dialogue_arguments.map((d, idx) => {
             if (d.tax === ArgumentTaxEnum.CLAIM)
               return (
-                <span className="px-2 py-1 bg-black text-white text-xs rounded-full" key={idx}>
+                <span
+                  className="px-2 py-1 bg-black text-white text-xs rounded-full"
+                  key={idx}
+                >
                   AddClaim(&ldquo;{d.claimKey}&ldquo;,&ldquo;{d.text}
                   &ldquo;,{d.type},{d.tax})
                 </span>
               );
             else {
               return (
-                <span className="px-2 py-1 bg-black text-white text-xs rounded-full" key={idx}>
+                <span
+                  className="px-2 py-1 bg-black text-white text-xs rounded-full"
+                  key={idx}
+                >
                   AddChainArg(&ldquo;{d.claimKey}&ldquo;,&ldquo;
                   {d?.connectorKey}&ldquo;,&ldquo;{d.text}
                   &ldquo;,{d.tax})

@@ -14,7 +14,7 @@ const StoryList = () => {
         <ScrollArea className="h-full">
           <div className="flex flex-col gap-2 pt-0">
             {story.map((line, idx) => {
-              return <StoryLineCard key={idx} line={line} idx={idx} />;
+              return <StoryLineCard key={idx} line={line} idx={line.lineNum} />;
             })}
           </div>
         </ScrollArea>

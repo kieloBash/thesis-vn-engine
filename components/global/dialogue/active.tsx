@@ -57,6 +57,7 @@ const ActiveDialogue = () => {
     selectedLine,
     setStory,
   } = useStoryContext();
+  console.log(selectedLine);
 
   const [currDialogue, setcurrDialogue] = useState(
     selectedLine?.dialogue || ""
@@ -108,10 +109,8 @@ const ActiveDialogue = () => {
   }, [story, fullArguments]);
 
   const dialogue_arguments = useDisplayArg({
-    story,
     args: fullArguments,
-    variant: "Active",
-    idx: selectedIndex,
+    key: selectedIndex,
   });
 
   function handleKeyDown(event: KeyboardEvent<HTMLTextAreaElement>) {
@@ -207,7 +206,6 @@ const ActiveDialogue = () => {
     setfullArguments((prev) => [...prev, newFullArgument]);
     resetArgForm();
   }
-
   function AddWarrantGroundArgument(ww: "warrant" | "ground") {
     let newFullArguments = [...fullArguments];
     let argIndex = newFullArguments.findIndex((d) => d.claimKey === arg_key);
@@ -296,7 +294,10 @@ const ActiveDialogue = () => {
     };
 
     let newStory = [...story];
-    newStory[selectedIndex] = newDialogue;
+    const index = newStory.findIndex((d) => d.lineNum === selectedIndex);
+    if (index === -1) return;
+
+    newStory[index] = newDialogue;
     setStory(newStory);
 
     setArguments(fullArguments);
@@ -311,8 +312,35 @@ const ActiveDialogue = () => {
   }
   function handleDeleteDialogue() {
     let newStory = [...story];
-    newStory.splice(selectedIndex, 1);
+    const index = newStory.findIndex((d) => d.lineNum === selectedIndex);
+    if (index === -1) return;
+
+    newStory.splice(index, 1);
     setStory(newStory);
+
+    // DELETE ARGS
+    let deletedArgs = argumentLines.filter((d) => d.lineRef !== selectedIndex);
+
+    // Filter out only chain.ground or chain.warrant if matching the selectedIndex
+    let updatedArgs: FullArgument[] = [];
+    deletedArgs.forEach((arg) => {
+      let newArg = arg;
+      let newChains: ArgumentChain[] = [];
+
+      newArg.chain.map((ch) => {
+        let newChain = ch;
+
+        if (newChain.ground?.lineRef === selectedIndex) delete newChain.ground;
+        if (newChain.warrant?.lineRef === selectedIndex)
+          delete newChain.warrant;
+
+        if (newChain.ground || newChain.warrant) newChains.push(newChain);
+      });
+      newArg.chain = newChains;
+      updatedArgs.push(newArg);
+    });
+
+    setArguments(updatedArgs);
 
     resetForm();
     resetModify();

@@ -44,7 +44,7 @@ export type ArgumentType = "For" | "Against" | "Irrelevant";
 export type ArgumentTax = "Claim" | "Warrant" | "Ground";
 
 export interface Dialogue {
-  lineNum: number;
+  lineNum: string;
   speaker?: Speaker;
   dialogue?: string;
   commands: Command[];

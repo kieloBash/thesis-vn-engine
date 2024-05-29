@@ -40,6 +40,7 @@ import {
   FullArgument,
 } from "@/types/new-types";
 import useDisplayArg from "@/components/hooks/useDisplayArg";
+import { generateRandomKey } from "@/helpers";
 
 const NewDialogue = () => {
   const {
@@ -71,6 +72,7 @@ const NewDialogue = () => {
   }, [argumentLines]);
 
   const [error, setError] = useState("");
+  const [randKey, setRandKey] = useState<string>(generateRandomKey());
 
   const claimKeys = useMemo(() => {
     const idKeys = new Set<string>();
@@ -87,7 +89,10 @@ const NewDialogue = () => {
     return Array.from(idKeys);
   }, [story, fullArguments]);
 
-  const dialogue_arguments = useDisplayArg({ story, args: fullArguments });
+  const dialogue_arguments = useDisplayArg({
+    args: fullArguments,
+    key: randKey,
+  });
 
   function handleKeyDown(event: KeyboardEvent<HTMLTextAreaElement>) {
     if (event.key === "Enter" && !event.shiftKey) {
@@ -162,7 +167,7 @@ const NewDialogue = () => {
       return;
     }
     const newFullArgument: FullArgument = {
-      lineRef: story.length,
+      lineRef: randKey,
       claimKey: arg_key,
       claimText: arg_line,
       type:
@@ -203,7 +208,7 @@ const NewDialogue = () => {
         foundChain = {
           connectorKey: arg_connectorkey,
           warrant: {
-            lineRef: story.length,
+            lineRef: randKey,
             connectorKey: arg_connectorkey,
             text: arg_line,
             tax: "warrant" as any,
@@ -213,7 +218,7 @@ const NewDialogue = () => {
         foundChain = {
           connectorKey: arg_connectorkey,
           ground: {
-            lineRef: story.length,
+            lineRef: randKey,
             connectorKey: arg_connectorkey,
             text: arg_line,
             tax: "ground" as any,
@@ -227,7 +232,7 @@ const NewDialogue = () => {
       if (ww === "warrant") {
         if (!foundChain.warrant)
           foundChain.warrant = {
-            lineRef: story.length,
+            lineRef: randKey,
             connectorKey: arg_connectorkey,
             text: arg_line,
             tax: "warrant" as any,
@@ -239,7 +244,7 @@ const NewDialogue = () => {
       } else {
         if (!foundChain.ground)
           foundChain.ground = {
-            lineRef: story.length,
+            lineRef: randKey,
             connectorKey: arg_connectorkey,
             text: arg_line,
             tax: "ground" as any,
@@ -262,7 +267,7 @@ const NewDialogue = () => {
     if (!speaker) return null;
 
     const newDialogue: Dialogue = {
-      lineNum: story.length,
+      lineNum: randKey,
       speaker,
       dialogue: currDialogue,
       commands: currCommands,
@@ -280,6 +285,7 @@ const NewDialogue = () => {
   function handleSubmitNewStoryLine(e: FormEvent) {
     e.preventDefault();
     AddNewDialogue();
+    setRandKey(generateRandomKey());
   }
 
   return (

@@ -4,7 +4,6 @@ import {
   Dialog,
   DialogContent,
   DialogDescription,
-  DialogFooter,
   DialogHeader,
   DialogTitle,
   DialogTrigger,
@@ -12,18 +11,13 @@ import {
 
 import { useStoryContext } from "@/providers/story";
 import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
-import { useMemo } from "react";
-import { Argument } from "@/types";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
-import ArgumentSummaryCard from "./card";
-import { FullArgument } from "@/types/new-types";
 import clsx from "clsx";
-import { hasChainWithGroundAndWarrant, hasIncompleteChain } from "@/helpers";
+import {  hasIncompleteChain } from "@/helpers";
 
 export function ArgumentSummaryModal() {
   const { argumentLines } = useStoryContext();
-  console.log(argumentLines);
 
   return (
     <Dialog>
@@ -36,7 +30,7 @@ export function ArgumentSummaryModal() {
         <DialogHeader>
           <DialogTitle>Arguments</DialogTitle>
           <DialogDescription>
-            Must have at least 10 Complete Arguments. A complete argument
+            Must have at least 5 Complete Arguments. A complete argument
             consists of a claim and multiple chain of grounds and warrants.
           </DialogDescription>
         </DialogHeader>

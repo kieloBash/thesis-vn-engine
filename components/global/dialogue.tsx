@@ -8,7 +8,7 @@ import ActiveDialogue from "./dialogue/active";
 const Dialogue = () => {
   const { toggleModify, selectedIndex, selectedLine } = useStoryContext();
 
-  if (toggleModify && selectedIndex >= 0 && selectedLine)
+  if (toggleModify && selectedIndex && selectedLine)
     return <ActiveDialogue />;
   else return <NewDialogue />;
 };

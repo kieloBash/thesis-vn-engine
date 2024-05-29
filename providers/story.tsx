@@ -13,8 +13,8 @@ type ContextType = {
 
   selectedLine: Dialogue | undefined;
   setSelectedLine: (temp: Dialogue | undefined) => void;
-  selectedIndex: number;
-  setSelectedIndex: (temp: number) => void;
+  selectedIndex: string;
+  setSelectedIndex: (temp: string) => void;
 
   toggleModify: boolean;
   setToggleModify: (temp: boolean) => void;
@@ -33,8 +33,8 @@ const Context = React.createContext<ContextType>({
 
   selectedLine: undefined,
   setSelectedLine: (temp: Dialogue | undefined) => {},
-  selectedIndex: -1,
-  setSelectedIndex: (temp: number) => {},
+  selectedIndex: "",
+  setSelectedIndex: (temp: string) => {},
 
   toggleModify: false,
   setToggleModify: (temp: boolean) => {},
@@ -53,7 +53,7 @@ const StoryProvider = ({ children }: { children: React.ReactNode }) => {
   const [selectedLine, setSelectedLine] = React.useState<
     Dialogue | undefined
   >();
-  const [selectedIndex, setSelectedIndex] = React.useState<number>(-1);
+  const [selectedIndex, setSelectedIndex] = React.useState<string>("");
   const [toggleModify, setToggleModify] = React.useState<boolean>(false);
 
   const AddDialogue = (newDialogue: Dialogue) => {
@@ -61,7 +61,7 @@ const StoryProvider = ({ children }: { children: React.ReactNode }) => {
   };
 
   function resetModify() {
-    setSelectedIndex(-1);
+    setSelectedIndex("");
     setSelectedLine(undefined);
     setToggleModify(false);
   }
