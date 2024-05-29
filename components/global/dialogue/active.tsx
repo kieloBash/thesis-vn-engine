@@ -49,7 +49,6 @@ const ActiveDialogue = () => {
   const {
     speaker,
     story,
-    AddDialogue,
     resetModify,
     argumentLines,
     setArguments,
@@ -57,7 +56,6 @@ const ActiveDialogue = () => {
     selectedLine,
     setStory,
   } = useStoryContext();
-  console.log(selectedLine);
 
   const [currDialogue, setcurrDialogue] = useState(
     selectedLine?.dialogue || ""
@@ -96,17 +94,11 @@ const ActiveDialogue = () => {
   const claimKeys = useMemo(() => {
     const idKeys = new Set<string>();
 
-    story.forEach((dialogue) => {
-      dialogue.arguments.forEach((argument) => {
-        idKeys.add(argument.claimKey);
-      });
-    });
-
     fullArguments.forEach((argument) => {
       idKeys.add(argument.claimKey);
     });
     return Array.from(idKeys);
-  }, [story, fullArguments]);
+  }, [fullArguments]);
 
   const dialogue_arguments = useDisplayArg({
     args: fullArguments,
@@ -561,24 +553,63 @@ const ActiveDialogue = () => {
                     {dialogue_arguments.map((d, idx) => {
                       if (d.tax === ArgumentTaxEnum.CLAIM)
                         return (
-                          <span
-                            className="px-2 py-1 bg-slate-100 rounded-full"
+                          <button
+                            type="button"
+                            onClick={() => {
+                              let deletedArgs = fullArguments.filter(
+                                (atArg) => atArg.claimKey !== d.claimKey
+                              );
+                              setfullArguments(deletedArgs);
+                            }}
+                            className="px-2 py-1 bg-slate-100 rounded-full hover:bg-slate-300 transition-colors"
                             key={idx}
                           >
                             AddClaim(&ldquo;{d.claimKey}&ldquo;,&ldquo;{d.text}
                             &ldquo;,{d.type},{d.tax})
-                          </span>
+                          </button>
                         );
                       else {
                         return (
-                          <span
-                            className="px-2 py-1 bg-slate-100 rounded-full"
+                          <button
+                            type="button"
+                            onClick={() => {
+                              let updatedArgs: FullArgument[] = [];
+                              fullArguments.forEach((arg) => {
+                                let newArg = arg;
+                                let newChains: ArgumentChain[] = [];
+
+                                newArg.chain.map((ch) => {
+                                  let newChain = ch;
+
+                                  if (
+                                    newChain.ground?.connectorKey ===
+                                      d?.connectorKey &&
+                                    newArg.claimKey === d.claimKey
+                                  )
+                                    delete newChain.ground;
+                                  if (
+                                    newChain.warrant?.connectorKey ===
+                                      d?.connectorKey &&
+                                    newArg.claimKey === d.claimKey
+                                  )
+                                    delete newChain.warrant;
+
+                                  if (newChain.ground || newChain.warrant)
+                                    newChains.push(newChain);
+                                });
+                                newArg.chain = newChains;
+                                updatedArgs.push(newArg);
+
+                                setfullArguments(updatedArgs);
+                              });
+                            }}
+                            className="px-2 py-1 bg-slate-100 rounded-full hover:bg-slate-300 transition-colors"
                             key={idx}
                           >
                             AddChainArg(&ldquo;{d.claimKey}&ldquo;,&ldquo;
                             {d?.connectorKey}&ldquo;,&ldquo;{d.text}
                             &ldquo;,{d.tax})
-                          </span>
+                          </button>
                         );
                       }
                     })}

@@ -14,11 +14,10 @@ import { ScrollArea, ScrollBar } from "@/components/ui/scroll-area";
 import { Label } from "@/components/ui/label";
 import { Separator } from "@/components/ui/separator";
 import clsx from "clsx";
-import {  hasIncompleteChain } from "@/helpers";
+import { hasIncompleteChain } from "@/helpers";
 
 export function ArgumentSummaryModal() {
   const { argumentLines } = useStoryContext();
-
   return (
     <Dialog>
       <DialogTrigger asChild>

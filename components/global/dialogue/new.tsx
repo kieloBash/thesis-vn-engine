@@ -45,7 +45,6 @@ import { generateRandomKey } from "@/helpers";
 const NewDialogue = () => {
   const {
     speaker,
-    story,
     AddDialogue,
     resetModify,
     argumentLines,
@@ -77,17 +76,11 @@ const NewDialogue = () => {
   const claimKeys = useMemo(() => {
     const idKeys = new Set<string>();
 
-    story.forEach((dialogue) => {
-      dialogue.arguments.forEach((argument) => {
-        idKeys.add(argument.claimKey);
-      });
-    });
-
     fullArguments.forEach((argument) => {
       idKeys.add(argument.claimKey);
     });
     return Array.from(idKeys);
-  }, [story, fullArguments]);
+  }, [fullArguments]);
 
   const dialogue_arguments = useDisplayArg({
     args: fullArguments,
