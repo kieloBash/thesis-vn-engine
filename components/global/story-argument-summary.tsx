@@ -6,6 +6,7 @@ import { Button } from "@/components/ui/button";
 import { ArgumentSummaryModal } from "./argument-summary/argument-summary-modal";
 import { hasIncompleteChain } from "@/helpers";
 import { ArgumentTypeEnum } from "@/types/new-types";
+import { ExportModal } from "./modals/export-file";
 
 const StoryArgumentSummary = () => {
   const { argumentLines } = useStoryContext();
@@ -63,9 +64,7 @@ const StoryArgumentSummary = () => {
       </div>
       <div className="flex gap-2 justify-center items-center">
         <ArgumentSummaryModal />
-        <Button type="button" size={"sm"}>
-          Create Story
-        </Button>
+        <ExportModal />
       </div>
     </div>
   );
