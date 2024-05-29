@@ -43,9 +43,15 @@ export function ArgumentSummaryModal() {
 
               return (
                 <div key={idx} className={completeClassName}>
-                  <div className="flex flex-col justify-center items-center">
-                    <h2 className="font-bold">{arg.claimKey}</h2>
-                    <Label className="text-xs">KEY</Label>
+                  <div className="grid grid-cols-2 w-full">
+                    <div className="flex flex-col justify-center items-center">
+                      <h2 className="font-bold">{arg.claimKey}</h2>
+                      <Label className="text-xs">KEY</Label>
+                    </div>
+                    <div className="flex flex-col justify-center items-center">
+                      <h2 className="font-bold capitalize">{arg.type}</h2>
+                      <Label className="text-xs">TYPE</Label>
+                    </div>
                   </div>
                   <Separator className="my-2" />
                   <div className="flex flex-col justify-center items-center flex-1">

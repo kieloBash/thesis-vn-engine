@@ -545,9 +545,9 @@ const ActiveDialogue = () => {
           {/* DISPLAY */}
           <>
             <div className="flex-1 border rounded-md p-2">
-              {speaker && currDialogue !== "" ? (
+              {currSpeaker && currDialogue !== "" ? (
                 <p className="text-sm font-mono">
-                  <span className="">{speaker?.name.split(" ")[0]}</span>{" "}
+                  <span className="">{currSpeaker?.name.split(" ")[0]}</span>{" "}
                   <span className="">&ldquo;{currDialogue}&ldquo;</span>
                   <div className="flex flex-wrap gap-0.5 text-xs">
                     {dialogue_arguments.map((d, idx) => {
