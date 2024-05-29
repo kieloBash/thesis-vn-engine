@@ -1,8 +1,9 @@
 "use client";
 import { useStoryContext } from "@/providers/story";
 import { useMemo } from "react";
-import { getDisplayArgs, isBackgroundCommand } from "@/helpers";
+import { getDisplayArgs, isAudioCommand, isBackgroundCommand } from "@/helpers";
 import { ArgumentTaxEnum } from "@/types/new-types";
+import { ReceiptRussianRuble } from "lucide-react";
 
 const useGetStory = () => {
   const { story, argumentLines } = useStoryContext();
@@ -51,6 +52,28 @@ const useGetStory = () => {
           .split(" ")
           .join("_")})`;
         return textToDisplay;
+      } else if (
+        dl.type === "CommandOnly" &&
+        dl.commands.length > 0 &&
+        isAudioCommand(dl.commands[0])
+      ) {
+        if (dl.commands[0].status === "ready") {
+          const audioCom = dl.commands[0];
+
+          if (audioCom.name === "playtrack" && audioCom.audio) {
+            const textToDisplay = `${audioCom.name}("${
+              audioCom.audio.trackname
+            }" ${audioCom.audio.channel} ${audioCom.audio.volume} ${
+              audioCom.audio.pitch
+            } ${audioCom.audio.starting_vol} ${
+              audioCom.audio.loop ? "true" : "false"
+            })`;
+            return textToDisplay;
+          } else if (audioCom.name === "playsoundeffect" && audioCom.audio) {
+            const textToDisplay = `${audioCom.name}("${audioCom.audio.trackname}" ${audioCom.audio.volume})`;
+            return textToDisplay;
+          }
+        }
       }
     });
   }, [story, argumentLines]);

@@ -1,10 +1,14 @@
-import { BackgroundCommand, Command, CommandType } from "@/types";
+import { AudioCommand, BackgroundCommand, Command, CommandType } from "@/types";
 import { ArgumentTaxEnum, DisplayArg, FullArgument } from "@/types/new-types";
 
 export const isBackgroundCommand = (
   command: Command
 ): command is BackgroundCommand => {
   return command.type === CommandType.Background;
+};
+
+export const isAudioCommand = (command: Command): command is AudioCommand => {
+  return command.type === CommandType.Audio;
 };
 
 export const hasChainWithGroundAndWarrant = (claim: FullArgument): boolean => {

@@ -1,6 +1,7 @@
 import {
   ArgumentTax,
   ArgumentType,
+  Audio,
   Background,
   Command,
   CommandType,
@@ -58,10 +59,23 @@ export const BACKGROUNDS: Background[] = [
   { name: "Salon (MidNight)", image: SAL_MIDNIGHT },
 ];
 
+export const AUDIOS: Audio[] = [
+  { trackname: "Track #1" },
+  { trackname: "Track #2" },
+  { trackname: "Track #3" },
+];
+export const SFX: Audio[] = [
+  { trackname: "sfx #1" },
+  { trackname: "sfx #2" },
+  { trackname: "sfx #3" },
+];
+
 export const COMMANDS: Command[] = [
   { name: "CharacterMoveLeft", type: CommandType.Action, parameters: [] },
   { name: "CharacterMoveRight", type: CommandType.Action, parameters: [] },
   { name: "CharacterMoveUp", type: CommandType.Action, parameters: [] },
   { name: "CharacterMoveLeft", type: CommandType.Action, parameters: [] },
   { name: "CharacterShrink", type: CommandType.Action, parameters: [] },
+  { name: "playtrack", type: CommandType.Audio, parameters: [] },
+  { name: "playsoundeffect", type: CommandType.Audio, parameters: [] },
 ];

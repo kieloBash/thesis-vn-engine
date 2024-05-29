@@ -62,6 +62,7 @@ const BackgroundCommandTemplate = ({
       type: CommandType.Background,
       parameters: [currBackground.name],
       bg: currBackground,
+      status: "ready",
     };
     newDialogue.commands[0] = newBackgroundCommand;
 

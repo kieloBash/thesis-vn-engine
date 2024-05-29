@@ -6,7 +6,7 @@ import { Badge } from "../ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 import clsx from "clsx";
-import { isBackgroundCommand } from "@/helpers";
+import { isAudioCommand, isBackgroundCommand } from "@/helpers";
 import useDisplayArg from "../hooks/useDisplayArg";
 import { ArgumentTaxEnum } from "@/types/new-types";
 
@@ -31,6 +31,7 @@ const StoryLineCard = ({ line, idx }: { line: Dialogue; idx: string }) => {
     key: idx,
   });
 
+  // IF BACKGROUND COMMAND
   if (line.commands.length > 0 && isBackgroundCommand(line.commands[0]))
     return (
       <button
@@ -74,6 +75,66 @@ const StoryLineCard = ({ line, idx }: { line: Dialogue; idx: string }) => {
                           </div>
                         </div>
                       );
+                  })}
+                </div>
+              ) : null}
+            </div>
+          </div>
+        </div>
+      </button>
+    );
+
+  if (line.commands.length > 0 && isAudioCommand(line.commands[0]))
+    return (
+      <button
+        className={activeClassName}
+        onClick={() => {
+          if (selectedIndex === idx) {
+            setToggleModify(false);
+            setSelectedLine(undefined);
+            setSelectedIndex("");
+          } else {
+            setToggleModify(true);
+            setSelectedLine(line);
+            setSelectedIndex(idx);
+          }
+        }}
+      >
+        <div className="flex w-full flex-col gap-1">
+          <div className="flex items-center">
+            <div className="flex gap-2">
+              {line.commands.length ? (
+                <div className="flex items-center gap-2">
+                  {line.commands.map((com, idx) => {
+                    if (isAudioCommand(com)) {
+                      if (com.audio) {
+                        return (
+                          <div
+                            key={idx}
+                            className="px-2 py-1 rounded-full bg-slate-200 text-black"
+                          >
+                            <div className="flex gap-1 justify-center items-center">
+                              <h4 className="font-bold text-xs">
+                                {com.name}({com.audio.trackname})
+                              </h4>
+                            </div>
+                          </div>
+                        );
+                      } else {
+                        return (
+                          <div
+                            key={idx}
+                            className="px-2 py-1 rounded-full bg-red-200 text-black"
+                          >
+                            <div className="flex gap-1 justify-center items-center">
+                              <h4 className="font-bold text-xs">
+                                Click to select which audio to play
+                              </h4>
+                            </div>
+                          </div>
+                        );
+                      }
+                    }
                   })}
                 </div>
               ) : null}

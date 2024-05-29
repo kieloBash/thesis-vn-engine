@@ -36,6 +36,7 @@ const MoreBackgrounds = () => {
                     type: CommandType.Background,
                     parameters: [bg.name],
                     bg,
+                    status: "disabled",
                   };
                   const newBackground: Dialogue = {
                     lineNum: generateRandomKey(),

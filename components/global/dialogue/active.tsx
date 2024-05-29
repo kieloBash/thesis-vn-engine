@@ -43,7 +43,8 @@ import useDisplayArg from "@/components/hooks/useDisplayArg";
 import { TooltipButton } from "../tooltip-btn";
 import { PlusIcon, Trash2Icon } from "lucide-react";
 import BackgroundCommandTemplate from "../active/background";
-import { isBackgroundCommand } from "@/helpers";
+import { isAudioCommand, isBackgroundCommand } from "@/helpers";
+import AudioCommandTemplate from "../active/audio";
 
 const ActiveDialogue = () => {
   const {
@@ -345,6 +346,15 @@ const ActiveDialogue = () => {
     isBackgroundCommand(selectedLine.commands[0])
   ) {
     return <BackgroundCommandTemplate command={selectedLine.commands[0]} />;
+  }
+
+  // IF AUDIO COMMAND
+  if (
+    selectedLine &&
+    selectedLine.commands.length > 0 &&
+    isAudioCommand(selectedLine.commands[0])
+  ) {
+    return <AudioCommandTemplate command={selectedLine.commands[0]} />;
   }
 
   return (

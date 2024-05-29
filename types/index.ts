@@ -18,7 +18,10 @@ export interface Command {
   name: string;
   type: CommandType;
   parameters: string[];
+  status?: CommandStatus;
 }
+export type CommandStatus = "ready" | "disabled";
+
 export enum CommandType {
   Background = "background",
   Action = "action",
@@ -27,6 +30,20 @@ export enum CommandType {
 export interface BackgroundCommand extends Command {
   type: CommandType.Background;
   bg: Background;
+}
+export interface AudioCommand extends Command {
+  type: CommandType.Audio;
+  audio?: Audio;
+}
+
+// Usage: -t trackname -c channel -v volume -p pitch -sv startingvolume -l loop
+export interface Audio {
+  trackname: string;
+  channel?: number;
+  volume?: number;
+  pitch?: number;
+  starting_vol?: number;
+  loop?: boolean;
 }
 
 // export type CommandType = "Background" | "Action" | "Audio";
