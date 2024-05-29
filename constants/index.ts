@@ -71,12 +71,14 @@ export const SFX: Audio[] = [
 ];
 
 export const COMMANDS: Command[] = [
-  { name: "CharacterMoveLeft", type: CommandType.Action, parameters: [] },
-  { name: "CharacterMoveRight", type: CommandType.Action, parameters: [] },
-  { name: "CharacterMoveUp", type: CommandType.Action, parameters: [] },
-  { name: "CharacterMoveLeft", type: CommandType.Action, parameters: [] },
+  { name: "MoveCharacter", type: CommandType.Action, parameters: [] },
+  { name: "HideCharacter", type: CommandType.Action, parameters: [] },
+
   { name: "playtrack", type: CommandType.Audio, parameters: [] },
   { name: "playsoundeffect", type: CommandType.Audio, parameters: [] },
+  { name: "stoptrack", type: CommandType.Audio, parameters: [] },
+  { name: "stopsoundeffect", type: CommandType.Audio, parameters: [] },
+
   { name: "StartNotebookMinigame", type: CommandType.Action, parameters: [] },
   { name: "StartCardGame", type: CommandType.Action, parameters: [] },
 ];
