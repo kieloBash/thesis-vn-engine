@@ -103,6 +103,14 @@ const StoryLineCard = ({ line, idx }: { line: Dialogue; idx: string }) => {
         <div className="flex w-full flex-col gap-1">
           <div className="flex items-center">
             <div className="flex items-center gap-2">
+              <Avatar className="h-8 w-8">
+                <AvatarImage
+                  src={line.speaker.image.src}
+                  alt="Pic"
+                  className="object-cover object-top bg-main-100 border"
+                />
+                <AvatarFallback>CN</AvatarFallback>
+              </Avatar>
               <div className="font-semibold">{line.speaker.name}</div>
             </div>
           </div>
