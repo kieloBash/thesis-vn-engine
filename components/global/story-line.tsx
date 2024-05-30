@@ -6,7 +6,11 @@ import { Badge } from "../ui/badge";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 
 import clsx from "clsx";
-import { isAudioCommand, isBackgroundCommand } from "@/helpers";
+import {
+  isActionCommand,
+  isAudioCommand,
+  isBackgroundCommand,
+} from "@/helpers";
 import useDisplayArg from "../hooks/useDisplayArg";
 import { ArgumentTaxEnum } from "@/types/new-types";
 
@@ -134,6 +138,71 @@ const StoryLineCard = ({ line, idx }: { line: Dialogue; idx: string }) => {
                           </div>
                         );
                       }
+                    }
+                  })}
+                </div>
+              ) : null}
+            </div>
+          </div>
+        </div>
+      </button>
+    );
+
+  // IF ACTION COMMAND
+  if (line.commands.length > 0 && isActionCommand(line.commands[0]))
+    return (
+      <button
+        className={activeClassName}
+        onClick={() => {
+          if (selectedIndex === idx) {
+            setToggleModify(false);
+            setSelectedLine(undefined);
+            setSelectedIndex("");
+          } else {
+            setToggleModify(true);
+            setSelectedLine(line);
+            setSelectedIndex(idx);
+          }
+        }}
+      >
+        <div className="flex w-full flex-col gap-1">
+          <div className="flex items-center">
+            <div className="flex gap-2">
+              {line.commands.length ? (
+                <div className="flex items-center gap-2">
+                  {line.commands.map((com, idx) => {
+                    if (com.status === "ready") {
+                      return (
+                        <div
+                          key={idx}
+                          className="px-2 py-1 rounded-full bg-slate-200 text-black"
+                        >
+                          <div className="flex gap-1 justify-center items-center">
+                            {com.name === "MoveCharacter" ? (
+                              <>
+                                <h4 className="font-bold text-xs">
+                                  {com.name}({com.parameters[0]}{" "}
+                                  {com.parameters[1]}:{com.parameters[2]}{" "}
+                                  {com.parameters[3]} {com.parameters[4]})
+                                </h4>
+                              </>
+                            ) : null}
+                          </div>
+                        </div>
+                      );
+                    } else {
+                      return (
+                        <div
+                          key={idx}
+                          className="px-2 py-1 rounded-full bg-red-200 text-black"
+                        >
+                          <div className="flex gap-1 justify-center items-center">
+                            <h4 className="font-bold text-xs">
+                              Click to edit command
+                            </h4>
+                          </div>
+                        </div>
+                      );
                     }
                   })}
                 </div>

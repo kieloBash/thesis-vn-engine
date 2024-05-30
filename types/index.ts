@@ -37,6 +37,13 @@ export interface AudioCommand extends Command {
   type: CommandType.Audio;
   audio?: Audio;
 }
+export interface ActionCommand extends Command {
+  type: CommandType.Action;
+  speaker?: Speaker;
+  xPos?: number;
+  speed_duration?: number;
+  isInstant?: boolean;
+}
 
 // Usage: -t trackname -c channel -v volume -p pitch -sv startingvolume -l loop
 export interface Audio {

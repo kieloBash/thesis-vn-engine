@@ -1,7 +1,12 @@
 "use client";
 import { useStoryContext } from "@/providers/story";
 import { useMemo } from "react";
-import { getDisplayArgs, isAudioCommand, isBackgroundCommand } from "@/helpers";
+import {
+  getDisplayArgs,
+  isActionCommand,
+  isAudioCommand,
+  isBackgroundCommand,
+} from "@/helpers";
 import { ArgumentTaxEnum } from "@/types/new-types";
 
 const useGetStory = () => {
@@ -72,6 +77,16 @@ const useGetStory = () => {
             const textToDisplay = `${audioCom.name}("${audioCom.audio.trackname}" ${audioCom.audio.volume})`;
             return textToDisplay;
           }
+        }
+      } else if (
+        dl.type === "CommandOnly" &&
+        dl.commands.length > 0 &&
+        isActionCommand(dl.commands[0])
+      ) {
+        const actCom = dl.commands[0];
+        if (actCom.name === "MoveCharacter") {
+          const textToDisplay = `${actCom.name}(${actCom.parameters[0]} ${actCom.parameters[1]}:${actCom.parameters[2]} ${actCom.parameters[3]} ${actCom.parameters[4]})`;
+          return textToDisplay;
         }
       }
     });

@@ -4,7 +4,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 
 import clsx from "clsx";
 import { COMMANDS } from "@/constants";
-import { AudioCommand, CommandType, Dialogue } from "@/types";
+import { ActionCommand, AudioCommand, Command, CommandType, Dialogue } from "@/types";
 import { generateRandomKey } from "@/helpers";
 import { useStoryContext } from "@/providers/story";
 
@@ -39,6 +39,21 @@ const MoreCommands = () => {
                       type: "CommandOnly",
                     };
                     setStory([...story, newAudioCommand]);
+                  } else if (com.type === CommandType.Action) {
+                    const newCommand: ActionCommand = {
+                      name: com.name,
+                      type: CommandType.Action,
+                      parameters: [],
+                      status: "disabled",
+                    };
+
+                    const newActionCommand: Dialogue = {
+                      lineNum: generateRandomKey(),
+                      commands: [newCommand],
+                      arguments: [],
+                      type: "CommandOnly",
+                    };
+                    setStory([...story, newActionCommand]);
                   }
                 }}
               >

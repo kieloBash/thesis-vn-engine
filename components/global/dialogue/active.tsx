@@ -44,6 +44,7 @@ import { TooltipButton } from "../tooltip-btn";
 import { PlusIcon, Trash2Icon } from "lucide-react";
 import BackgroundCommandTemplate from "../active/background";
 import {
+  isActionCommand,
   isAudioCommand,
   isBackgroundCommand,
   isSpawnedSpeaker,
@@ -51,6 +52,7 @@ import {
 import AudioCommandTemplate from "../active/audio";
 import Image from "next/image";
 import { ScrollArea } from "@/components/ui/scroll-area";
+import ActionCommandTemplate from "../active/action";
 
 const ActiveDialogue = () => {
   const {
@@ -285,7 +287,6 @@ const ActiveDialogue = () => {
     resetArgForm();
   }
 
-
   function SaveChanges() {
     if (!currSpeaker) return null;
 
@@ -305,7 +306,7 @@ const ActiveDialogue = () => {
     ) {
       let newSpeakers = [...spawnedSpeakers];
       newSpeakers = newSpeakers.filter((s) => s.name !== speaker?.name);
-      console.log(newSpeakers)
+      console.log(newSpeakers);
       setspawnedSpeakers([...newSpeakers, currSpeaker]);
     }
 
@@ -389,6 +390,15 @@ const ActiveDialogue = () => {
     isAudioCommand(selectedLine.commands[0])
   ) {
     return <AudioCommandTemplate command={selectedLine.commands[0]} />;
+  }
+
+  // IF ACTION COMMAND
+  if (
+    selectedLine &&
+    selectedLine.commands.length > 0 &&
+    isActionCommand(selectedLine.commands[0])
+  ) {
+    return <ActionCommandTemplate command={selectedLine.commands[0]} />;
   }
 
   return (

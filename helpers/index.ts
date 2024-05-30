@@ -1,4 +1,5 @@
 import {
+  ActionCommand,
   AudioCommand,
   BackgroundCommand,
   Command,
@@ -15,6 +16,10 @@ export const isBackgroundCommand = (
 
 export const isAudioCommand = (command: Command): command is AudioCommand => {
   return command.type === CommandType.Audio;
+};
+
+export const isActionCommand = (command: Command): command is ActionCommand => {
+  return command.type === CommandType.Action;
 };
 
 export const hasChainWithGroundAndWarrant = (claim: FullArgument): boolean => {
