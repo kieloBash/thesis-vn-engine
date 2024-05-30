@@ -37,6 +37,7 @@ export const CHARACTERS: Speaker[] = [
   { name: "Sammy Jacob", image: SAMMY },
   { name: "Tris Jones", image: TRIS },
   { name: "Ezekiel Mendoza", image: EZEKIEL },
+  { name: "ME" },
 ];
 
 export const ARG_TAX: ArgumentTax[] = ["Claim", "Ground", "Warrant"];
@@ -72,6 +73,7 @@ export const SFX: Audio[] = [
 
 export const COMMANDS: Command[] = [
   { name: "MoveCharacter", type: CommandType.Action, parameters: [] },
+  { name: "FlipCharacter", type: CommandType.Action, parameters: [] },
   { name: "HideCharacter", type: CommandType.Action, parameters: [] },
 
   { name: "playtrack", type: CommandType.Audio, parameters: [] },

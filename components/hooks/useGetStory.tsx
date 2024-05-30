@@ -3,7 +3,6 @@ import { useStoryContext } from "@/providers/story";
 import { useMemo } from "react";
 import { getDisplayArgs, isAudioCommand, isBackgroundCommand } from "@/helpers";
 import { ArgumentTaxEnum } from "@/types/new-types";
-import { ReceiptRussianRuble } from "lucide-react";
 
 const useGetStory = () => {
   const { story, argumentLines } = useStoryContext();
@@ -16,9 +15,9 @@ const useGetStory = () => {
 
         const speakerName = dl.speaker?.name.split(" ")[0];
         let spawnCommand = "";
-        if (!charactersSpawned.includes(speakerName)) {
+        if (!charactersSpawned.includes(speakerName) && speakerName !== "ME") {
           charactersSpawned.push(speakerName);
-          spawnCommand = `CreateCharacter(${speakerName} -e true), SetPosition(${speakerName} 1:0.5)`;
+          spawnCommand = `CreateCharacter(${speakerName} -e true), SetPosition(${speakerName} ${dl.speaker.xPos}:0.5)`;
           ARR_TO_DISPLAY.push(spawnCommand);
         }
 

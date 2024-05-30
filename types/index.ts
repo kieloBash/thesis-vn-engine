@@ -9,6 +9,8 @@ export interface StoryLine {
 export interface Speaker {
   name: string;
   image?: any;
+  xPos?: number;
+  yPos?: number;
 }
 export interface Background {
   name: string;
@@ -66,6 +68,8 @@ export interface Dialogue {
   dialogue?: string;
   commands: Command[];
   arguments: FullArgument[];
+
+  isSpawnSpeaker?: boolean;
 
   type: DialogueType;
 }

@@ -164,14 +164,16 @@ const StoryLineCard = ({ line, idx }: { line: Dialogue; idx: string }) => {
         <div className="flex w-full flex-col gap-1">
           <div className="flex items-center">
             <div className="flex items-center gap-2">
-              <Avatar className="h-8 w-8">
-                <AvatarImage
-                  src={line.speaker.image.src}
-                  alt="Pic"
-                  className="object-cover object-top bg-main-100 border"
-                />
-                <AvatarFallback>CN</AvatarFallback>
-              </Avatar>
+              {line.speaker.name !== "ME" && (
+                <Avatar className="h-8 w-8">
+                  <AvatarImage
+                    src={line.speaker.image.src}
+                    alt="Pic"
+                    className="object-cover object-top bg-main-100 border"
+                  />
+                  <AvatarFallback>CN</AvatarFallback>
+                </Avatar>
+              )}
               <div className="font-semibold">{line.speaker.name}</div>
             </div>
           </div>
@@ -180,6 +182,12 @@ const StoryLineCard = ({ line, idx }: { line: Dialogue; idx: string }) => {
           {line.dialogue.substring(0, 300)}
         </div>
         <div className="flex flex-wrap gap-0.5 font-mono">
+          {line.isSpawnSpeaker && line.speaker.name !== "ME" && (
+            <span className="px-2 py-1 bg-main-500 text-white text-xs rounded-full">
+              SpawnedCharacter({line.speaker.name.split(" ")[0]}{" "}
+              {line.speaker.xPos}:0.5)
+            </span>
+          )}
           {dialogue_arguments.map((d, idx) => {
             if (d.tax === ArgumentTaxEnum.CLAIM)
               return (

@@ -63,6 +63,9 @@ const StoryArgumentSummary = () => {
         </div>
       </div>
       <div className="flex gap-2 justify-center items-center">
+        <Button type="button" size={"sm"}>
+          Load
+        </Button>
         <ArgumentSummaryModal />
         <ExportModal />
       </div>

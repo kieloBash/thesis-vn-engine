@@ -8,6 +8,10 @@ type ContextType = {
   setSpeaker: (temp: Speaker | undefined) => void;
   story: Dialogue[];
   setStory: (temp: Dialogue[]) => void;
+
+  spawnedSpeakers: Speaker[];
+  setspawnedSpeakers: (temp: Speaker[]) => void;
+
   argumentLines: FullArgument[];
   setArguments: (temp: FullArgument[]) => void;
 
@@ -28,6 +32,10 @@ const Context = React.createContext<ContextType>({
   setSpeaker: (temp: Speaker | undefined) => {},
   story: [],
   setStory: (temp: Dialogue[]) => {},
+
+  spawnedSpeakers: [],
+  setspawnedSpeakers: (temp: Speaker[]) => {},
+
   argumentLines: [],
   setArguments: (temp: FullArgument[]) => {},
 
@@ -56,6 +64,8 @@ const StoryProvider = ({ children }: { children: React.ReactNode }) => {
   const [selectedIndex, setSelectedIndex] = React.useState<string>("");
   const [toggleModify, setToggleModify] = React.useState<boolean>(false);
 
+  const [spawnedSpeakers, setspawnedSpeakers] = React.useState<Speaker[]>([]);
+
   const AddDialogue = (newDialogue: Dialogue) => {
     setStory((prev) => [...prev, newDialogue]);
   };
@@ -73,6 +83,8 @@ const StoryProvider = ({ children }: { children: React.ReactNode }) => {
         setSpeaker,
         story,
         setStory,
+        spawnedSpeakers,
+        setspawnedSpeakers,
         argumentLines,
         setArguments,
 

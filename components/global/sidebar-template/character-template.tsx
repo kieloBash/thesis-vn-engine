@@ -7,6 +7,7 @@ import Image from "next/image";
 import { useStoryContext } from "@/providers/story";
 import clsx from "clsx";
 import { CHARACTERS } from "@/constants";
+import { PersonStandingIcon } from "lucide-react";
 
 const MoreCharacters = () => {
   const { speaker, setSpeaker } = useStoryContext();
@@ -36,12 +37,22 @@ const MoreCharacters = () => {
                   }
                 }}
               >
-                <Image
-                  src={character?.image || ""}
-                  alt={character?.name}
-                  fill
-                  className="object-cover object-top"
-                />
+                {character.name === "ME" ? (
+                  <>
+                    <div className="w-full h-full flex justify-center items-center">
+                      <PersonStandingIcon className="w-10 h-10"/>
+                    </div>
+                  </>
+                ) : (
+                  <>
+                    <Image
+                      src={character?.image || ""}
+                      alt={character?.name}
+                      fill
+                      className="object-cover object-top"
+                    />
+                  </>
+                )}
                 <div className="absolute bottom-0 left-0 w-full bg-white/50">
                   <h3 className="text-sm font-bold text-center">
                     {character.name}

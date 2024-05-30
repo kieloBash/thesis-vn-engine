@@ -1,4 +1,10 @@
-import { AudioCommand, BackgroundCommand, Command, CommandType } from "@/types";
+import {
+  AudioCommand,
+  BackgroundCommand,
+  Command,
+  CommandType,
+  Speaker,
+} from "@/types";
 import { ArgumentTaxEnum, DisplayArg, FullArgument } from "@/types/new-types";
 
 export const isBackgroundCommand = (
@@ -69,3 +75,15 @@ export const getDisplayArgs = ({
   });
   return data;
 };
+
+export function isSpawnedSpeaker({
+  speaker,
+  arr,
+}: {
+  speaker: Speaker;
+  arr: Speaker[];
+}) {
+  const temp = arr.find((s) => s.name === speaker.name);
+  if (temp) return true;
+  else false;
+}

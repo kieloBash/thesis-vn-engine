@@ -12,6 +12,7 @@ import {
   ArgumentType,
   Command,
   Dialogue,
+  Speaker,
 } from "@/types";
 
 // UI
@@ -40,7 +41,9 @@ import {
   FullArgument,
 } from "@/types/new-types";
 import useDisplayArg from "@/components/hooks/useDisplayArg";
-import { generateRandomKey } from "@/helpers";
+import { generateRandomKey, isSpawnedSpeaker } from "@/helpers";
+import Image from "next/image";
+import { ScrollArea } from "@/components/ui/scroll-area";
 
 const NewDialogue = () => {
   const {
@@ -49,6 +52,8 @@ const NewDialogue = () => {
     resetModify,
     argumentLines,
     setArguments,
+    spawnedSpeakers,
+    setspawnedSpeakers,
   } = useStoryContext();
 
   const [currDialogue, setcurrDialogue] = useState("");
@@ -63,6 +68,8 @@ const NewDialogue = () => {
   const [arg_type, setArg_type] = useState<ArgumentType | undefined | string>(
     undefined
   );
+
+  const [xPos, setxPos] = useState(0.5);
 
   const [fullArguments, setfullArguments] =
     useState<FullArgument[]>(argumentLines);
@@ -261,12 +268,19 @@ const NewDialogue = () => {
 
     const newDialogue: Dialogue = {
       lineNum: randKey,
-      speaker,
+      speaker: { ...speaker, xPos },
       dialogue: currDialogue,
       commands: currCommands,
       arguments: fullArguments,
       type: "FullDialogue",
+      isSpawnSpeaker: !isSpawnedSpeaker({ speaker, arr: spawnedSpeakers })
+        ? true
+        : false,
     };
+
+    // IF NOT SPAWNED
+    if (!isSpawnedSpeaker({ speaker, arr: spawnedSpeakers }))
+      setspawnedSpeakers([...spawnedSpeakers, speaker]);
 
     AddDialogue(newDialogue);
     setArguments(fullArguments);
@@ -283,102 +297,144 @@ const NewDialogue = () => {
 
   return (
     <div className="col-span-3 flex flex-col h-full bg-white">
-      <form
-        onSubmit={handleSubmitNewStoryLine}
-        className="w-full h-full flex flex-col"
-      >
-        <div className="w-full justify-between gap-1 items-center flex px-4 py-1">
-          {speaker ? (
-            <>
-              <div className="flex gap-2 justify-center items-center">
-                <Avatar>
-                  <AvatarImage
-                    src={speaker.image.src}
-                    alt="Pic"
-                    className="object-cover object-top bg-main-100 border"
-                  />
-                  <AvatarFallback>CN</AvatarFallback>
-                </Avatar>
-                <h4 className="font-bold text-lg">{speaker.name}</h4>
+      <ScrollArea className="h-screen">
+        <form
+          onSubmit={handleSubmitNewStoryLine}
+          className="w-full h-screen flex flex-col"
+        >
+          <div className="w-full justify-between gap-1 items-center flex px-4 py-1">
+            {speaker ? (
+              <>
+                <div className="flex gap-2 justify-center items-center">
+                  {speaker.name !== "ME" && (
+                    <Avatar>
+                      <AvatarImage
+                        src={speaker?.image?.src}
+                        alt="Pic"
+                        className="object-cover object-top bg-main-100 border"
+                      />
+                      <AvatarFallback>CN</AvatarFallback>
+                    </Avatar>
+                  )}
+                  <h4 className="font-bold text-lg">{speaker.name}</h4>
+                </div>
+              </>
+            ) : (
+              <div className="px-2 py-1 bg-slate-100 text-slate-400 font-bold rounded-full text-sm">
+                Select a Speaker
               </div>
-            </>
-          ) : (
-            <div className="px-2 py-1 bg-slate-100 text-slate-400 font-bold rounded-full text-sm">
-              Select a Speaker
-            </div>
-          )}
-        </div>
-        <Separator className="mb-4" />
-        <div className="flex flex-col gap-2 px-4 flex-1">
-          <div className="grid w-full gap-1.5">
-            <Label htmlFor="dialogue">Dialogue</Label>
-            <Textarea
-              value={currDialogue}
-              onChange={(e) => setcurrDialogue(e.target.value)}
-              placeholder="Type your dialogue here"
-              id="dialogue"
-              className="resize-none"
-              rows={3}
-              onKeyDown={handleKeyDown}
-            />
+            )}
           </div>
+          <Separator className="mb-4" />
+          <div className="flex flex-col gap-2 px-4 flex-1">
+            {/* DIALOGUE */}
+            <div className="grid w-full gap-1.5">
+              <Label htmlFor="dialogue">Dialogue</Label>
+              <Textarea
+                value={currDialogue}
+                onChange={(e) => setcurrDialogue(e.target.value)}
+                placeholder="Type your dialogue here"
+                id="dialogue"
+                className="resize-none"
+                rows={3}
+                onKeyDown={handleKeyDown}
+              />
+            </div>
 
-          {/* ARGUMENT */}
-          <>
-            <Label className="mt-2">ARGUMENT</Label>
-            <Input
-              placeholder="Enter argument here..."
-              value={arg_line}
-              onChange={(e) => setArg_line(e.target.value)}
-            />
-            <div className="w-full grid grid-cols-2 gap-2">
-              <Select
-                value={arg_tax}
-                onValueChange={(e) => {
-                  setArg_tax(e as ArgumentTax);
-                }}
-              >
-                <SelectTrigger className="w-full">
-                  <SelectValue placeholder="Select a Taxonomy" />
-                </SelectTrigger>
-                <SelectContent id="tax">
-                  <SelectGroup>
-                    <SelectLabel>TAXONOMY</SelectLabel>
-                    {ARG_TAX.map((data, idx) => {
-                      return (
-                        <SelectItem key={idx} value={data}>
-                          {data}
-                        </SelectItem>
-                      );
-                    })}
-                  </SelectGroup>
-                </SelectContent>
-              </Select>
-              {arg_tax === "Claim" ? (
-                <>
-                  <Input
-                    placeholder="Enter claim key..."
-                    value={arg_key}
-                    onChange={(e) => setArg_key(e.target.value)}
-                  />
-                </>
-              ) : null}
-              {arg_tax === "Warrant" || arg_tax === "Ground" ? (
-                <>
+            {/* ARGUMENT */}
+            <>
+              <Label className="mt-2">ARGUMENT</Label>
+              <Input
+                placeholder="Enter argument here..."
+                value={arg_line}
+                onChange={(e) => setArg_line(e.target.value)}
+              />
+              <div className="w-full grid grid-cols-2 gap-2">
+                <Select
+                  value={arg_tax}
+                  onValueChange={(e) => {
+                    setArg_tax(e as ArgumentTax);
+                  }}
+                >
+                  <SelectTrigger className="w-full">
+                    <SelectValue placeholder="Select a Taxonomy" />
+                  </SelectTrigger>
+                  <SelectContent id="tax">
+                    <SelectGroup>
+                      <SelectLabel>TAXONOMY</SelectLabel>
+                      {ARG_TAX.map((data, idx) => {
+                        return (
+                          <SelectItem key={idx} value={data}>
+                            {data}
+                          </SelectItem>
+                        );
+                      })}
+                    </SelectGroup>
+                  </SelectContent>
+                </Select>
+                {arg_tax === "Claim" ? (
+                  <>
+                    <Input
+                      placeholder="Enter claim key..."
+                      value={arg_key}
+                      onChange={(e) => setArg_key(e.target.value)}
+                    />
+                  </>
+                ) : null}
+                {arg_tax === "Warrant" || arg_tax === "Ground" ? (
+                  <>
+                    <>
+                      <Select
+                        value={arg_key}
+                        onValueChange={(e) => {
+                          setArg_key(e);
+                        }}
+                      >
+                        <SelectTrigger className="w-full">
+                          <SelectValue placeholder="Select a Claim Key" />
+                        </SelectTrigger>
+                        <SelectContent id="claimKey">
+                          <SelectGroup>
+                            <SelectLabel>CLAIM KEY</SelectLabel>
+                            {claimKeys.map((data, idx) => {
+                              return (
+                                <SelectItem key={idx} value={data}>
+                                  {data}
+                                </SelectItem>
+                              );
+                            })}
+                          </SelectGroup>
+                        </SelectContent>
+                      </Select>
+                    </>
+                  </>
+                ) : null}
+              </div>
+              <div className="w-full grid gap-2">
+                {arg_tax === "Warrant" || arg_tax === "Ground" ? (
+                  <>
+                    <Input
+                      placeholder="Enter connector key..."
+                      value={arg_connectorkey}
+                      onChange={(e) => setArg_connectorkey(e.target.value)}
+                    />
+                  </>
+                ) : null}
+                {arg_tax === "Claim" ? (
                   <>
                     <Select
-                      value={arg_key}
+                      value={arg_type}
                       onValueChange={(e) => {
-                        setArg_key(e);
+                        setArg_type(e as ArgumentType);
                       }}
                     >
                       <SelectTrigger className="w-full">
-                        <SelectValue placeholder="Select a Claim Key" />
+                        <SelectValue placeholder="Select a Type" />
                       </SelectTrigger>
-                      <SelectContent id="claimKey">
+                      <SelectContent id="type">
                         <SelectGroup>
-                          <SelectLabel>CLAIM KEY</SelectLabel>
-                          {claimKeys.map((data, idx) => {
+                          <SelectLabel>TYPE</SelectLabel>
+                          {ARG_TYPE.map((data, idx) => {
                             return (
                               <SelectItem key={idx} value={data}>
                                 {data}
@@ -389,111 +445,155 @@ const NewDialogue = () => {
                       </SelectContent>
                     </Select>
                   </>
-                </>
-              ) : null}
-            </div>
-            <div className="w-full grid gap-2">
-              {arg_tax === "Warrant" || arg_tax === "Ground" ? (
-                <>
-                  <Input
-                    placeholder="Enter connector key..."
-                    value={arg_connectorkey}
-                    onChange={(e) => setArg_connectorkey(e.target.value)}
-                  />
-                </>
-              ) : null}
-              {arg_tax === "Claim" ? (
-                <>
-                  <Select
-                    value={arg_type}
-                    onValueChange={(e) => {
-                      setArg_type(e as ArgumentType);
-                    }}
-                  >
-                    <SelectTrigger className="w-full">
-                      <SelectValue placeholder="Select a Type" />
-                    </SelectTrigger>
-                    <SelectContent id="type">
-                      <SelectGroup>
-                        <SelectLabel>TYPE</SelectLabel>
-                        {ARG_TYPE.map((data, idx) => {
-                          return (
-                            <SelectItem key={idx} value={data}>
-                              {data}
-                            </SelectItem>
-                          );
-                        })}
-                      </SelectGroup>
-                    </SelectContent>
-                  </Select>
-                </>
-              ) : null}
-            </div>
-            <div className="w-full">
-              <Button
-                type="button"
-                onClick={handleAddArgument}
-                className="w-full h-10"
-              >
-                + Add Argument
-              </Button>
-            </div>
-          </>
+                ) : null}
+              </div>
+              <div className="w-full">
+                <Button
+                  type="button"
+                  onClick={handleAddArgument}
+                  className="w-full h-10"
+                >
+                  + Add Argument
+                </Button>
+              </div>
+            </>
 
-          {/* DISPLAY */}
-          <>
-            <div className="flex-1 border rounded-md p-2">
-              {speaker && currDialogue !== "" ? (
-                <p className="text-sm font-mono">
-                  <span className="">{speaker?.name.split(" ")[0]}</span>{" "}
-                  <span className="">&ldquo;{currDialogue}&ldquo;</span>
-                  <div className="flex flex-wrap gap-0.5 text-xs">
-                    {dialogue_arguments.map((d, idx) => {
-                      if (d.tax === ArgumentTaxEnum.CLAIM)
-                        return (
-                          <span
-                            className="px-2 py-1 bg-slate-100 rounded-full"
-                            key={idx}
-                          >
-                            AddClaim(&ldquo;{d.claimKey}&ldquo;,&ldquo;{d.text}
-                            &ldquo;,{d.type},{d.tax})
-                          </span>
-                        );
-                      else {
-                        return (
-                          <span
-                            className="px-2 py-1 bg-slate-100 rounded-full"
-                            key={idx}
-                          >
-                            AddChainArg(&ldquo;{d.claimKey}&ldquo;,&ldquo;
-                            {d?.connectorKey}&ldquo;,&ldquo;{d.text}
-                            &ldquo;,{d.tax})
-                          </span>
-                        );
-                      }
-                    })}
+            {/* MOVEMENT */}
+            <>
+              {speaker &&
+              speaker.name !== "ME" &&
+              !isSpawnedSpeaker({ speaker, arr: spawnedSpeakers }) ? (
+                <>
+                  <div className="grid w-full gap-1.5 mt-4">
+                    <Label htmlFor="dialogue">SetXPosition()</Label>
+                    <Select
+                      value={`${xPos === 0.5 ? "0.5" : xPos === 0 ? "0" : "1"}`}
+                      onValueChange={(e) => {
+                        setxPos(e === "0.5" ? 0.5 : e === "0" ? 0 : 1);
+                      }}
+                    >
+                      <SelectTrigger className="w-[320px]">
+                        <SelectValue placeholder="xPos" />
+                      </SelectTrigger>
+                      <SelectContent id="xPos">
+                        <SelectGroup>
+                          <SelectLabel>X Position</SelectLabel>
+                          <SelectItem value={"0"}>Left</SelectItem>
+                          <SelectItem value={"0.5"}>Center</SelectItem>
+                          <SelectItem value={"1"}>Right</SelectItem>
+                        </SelectGroup>
+                      </SelectContent>
+                    </Select>
                   </div>
-                </p>
+                </>
               ) : null}
-            </div>
-          </>
+            </>
 
-          {/* ERROR */}
-          <p className="w-full text-left text-sm font-bold text-red-400">
-            {error}
-          </p>
-        </div>
-        <Separator className="mt-4" />
-        <div className="w-full justify-end gap-1 items-center flex px-4 py-2">
-          <Button
-            size={"sm"}
-            type="submit"
-            disabled={!speaker || currDialogue === ""}
-          >
-            + Add Dialogue
-          </Button>
-        </div>
-      </form>
+            {/* PREVIEW */}
+            <>
+              {speaker &&
+              speaker.name !== "ME" &&
+              !isSpawnedSpeaker({ speaker, arr: spawnedSpeakers }) ? (
+                <>
+                  <div className="h-56 relative overflow-hidden rounded-md">
+                    <div className="w-full h-full border p-2 bg-slate-800 grid grid-cols-3 divide-x divide-dashed">
+                      <div className="flex justify-center items-end">
+                        {speaker && speaker.name !== "ME" && xPos === 0 && (
+                          <Image
+                            alt="speaker"
+                            src={speaker.image.src}
+                            width={70}
+                            height={70}
+                          />
+                        )}
+                      </div>
+                      <div className="flex justify-center items-end">
+                        {speaker && speaker.name !== "ME" && xPos === 0.5 && (
+                          <Image
+                            alt="speaker"
+                            src={speaker.image.src}
+                            width={70}
+                            height={70}
+                          />
+                        )}
+                      </div>
+                      <div className="flex justify-center items-end">
+                        {speaker && speaker.name !== "ME" && xPos === 1 && (
+                          <Image
+                            alt="speaker"
+                            src={speaker.image?.src}
+                            width={70}
+                            height={70}
+                          />
+                        )}
+                      </div>
+                    </div>
+                    <div className="w-full absolute bottom-0 h-12 bg-black/30 p-4 flex justify-center items-center">
+                      <p className="flex-1 text-xs text-white text-wrap">
+                        {currDialogue}
+                      </p>
+                    </div>
+                  </div>
+                </>
+              ) : null}
+            </>
+
+            {/* DISPLAY */}
+            <>
+              <div className="min-h-20 border rounded-md p-2">
+                {speaker && currDialogue !== "" ? (
+                  <p className="text-sm font-mono">
+                    <span className="">{speaker?.name.split(" ")[0]}</span>{" "}
+                    <span className="">&ldquo;{currDialogue}&ldquo;</span>
+                    <div className="flex flex-wrap gap-0.5 text-xs">
+                      {dialogue_arguments.map((d, idx) => {
+                        if (d.tax === ArgumentTaxEnum.CLAIM)
+                          return (
+                            <span
+                              className="px-2 py-1 bg-slate-100 rounded-full"
+                              key={idx}
+                            >
+                              AddClaim(&ldquo;{d.claimKey}&ldquo;,&ldquo;
+                              {d.text}
+                              &ldquo;,{d.type},{d.tax})
+                            </span>
+                          );
+                        else {
+                          return (
+                            <span
+                              className="px-2 py-1 bg-slate-100 rounded-full"
+                              key={idx}
+                            >
+                              AddChainArg(&ldquo;{d.claimKey}&ldquo;,&ldquo;
+                              {d?.connectorKey}&ldquo;,&ldquo;{d.text}
+                              &ldquo;,{d.tax})
+                            </span>
+                          );
+                        }
+                      })}
+                    </div>
+                  </p>
+                ) : null}
+              </div>
+            </>
+
+            {/* ERROR */}
+            <p className="w-full text-left text-sm font-bold text-red-400">
+              {error}
+            </p>
+          </div>
+          <Separator className="mt-4" />
+          <div className="w-full justify-end gap-1 items-center flex px-4 py-2">
+            <Button
+              size={"sm"}
+              type="submit"
+              disabled={!speaker || currDialogue === ""}
+            >
+              + Add Dialogue
+            </Button>
+          </div>
+        </form>
+      </ScrollArea>
     </div>
   );
 };
