@@ -285,6 +285,7 @@ const ActiveDialogue = () => {
     resetArgForm();
   }
 
+
   function SaveChanges() {
     if (!currSpeaker) return null;
 
@@ -303,8 +304,9 @@ const ActiveDialogue = () => {
       selectedLine?.isSpawnSpeaker
     ) {
       let newSpeakers = [...spawnedSpeakers];
-      newSpeakers.filter((s) => s.name === speaker?.name);
-      setspawnedSpeakers([...spawnedSpeakers, currSpeaker]);
+      newSpeakers = newSpeakers.filter((s) => s.name !== speaker?.name);
+      console.log(newSpeakers)
+      setspawnedSpeakers([...newSpeakers, currSpeaker]);
     }
 
     let newStory = [...story];
@@ -325,12 +327,23 @@ const ActiveDialogue = () => {
     SaveChanges();
   }
   function handleDeleteDialogue() {
+    if (!currSpeaker) return null;
+
     let newStory = [...story];
     const index = newStory.findIndex((d) => d.lineNum === selectedIndex);
     if (index === -1) return;
 
     newStory.splice(index, 1);
     setStory(newStory);
+
+    if (
+      isSpawnedSpeaker({ speaker: currSpeaker, arr: spawnedSpeakers }) &&
+      selectedLine?.isSpawnSpeaker
+    ) {
+      let newSpeakers = [...spawnedSpeakers];
+      newSpeakers = newSpeakers.filter((s) => s.name !== currSpeaker?.name);
+      setspawnedSpeakers(newSpeakers);
+    }
 
     // DELETE ARGS
     let deletedArgs = argumentLines.filter((d) => d.lineRef !== selectedIndex);
