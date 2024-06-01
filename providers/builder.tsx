@@ -27,6 +27,10 @@ type ContextType = {
   setSelectedCommand: (
     temp: { command: CommandsEnum; id: string } | undefined
   ) => void;
+
+  // for edit
+  toggleEdits: boolean;
+  setToggleEdits: (temp: boolean) => void;
 };
 
 const Context = React.createContext<ContextType>({
@@ -43,6 +47,10 @@ const Context = React.createContext<ContextType>({
   setSelectedCommand: (
     temp: { command: CommandsEnum; id: string } | undefined
   ) => {},
+
+  // for edit
+  toggleEdits: false,
+  setToggleEdits: (temp: boolean) => {},
 });
 
 export const useBuilderContext = () => React.useContext(Context);
@@ -58,6 +66,7 @@ const BuilderProvider = ({ children }: { children: React.ReactNode }) => {
   const [selectedCommand, setSelectedCommand] = React.useState<
     { command: CommandsEnum; id: string } | undefined
   >(undefined);
+  const [toggleEdits, setToggleEdits] = React.useState<boolean>(false);
 
   return (
     <Context.Provider
@@ -73,6 +82,10 @@ const BuilderProvider = ({ children }: { children: React.ReactNode }) => {
         // for toggle
         selectedCommand,
         setSelectedCommand,
+
+        // for edit
+        toggleEdits,
+        setToggleEdits,
       }}
     >
       {children}
