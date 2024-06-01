@@ -101,6 +101,7 @@ export function isSpawnedCharacter({
   speaker: Character | undefined;
   arr: Character[];
 }) {
+  if (speaker?.name === "ME") return true;
   const temp = arr.find((s) => s.name === speaker?.name);
   if (temp) return true;
   else return false;

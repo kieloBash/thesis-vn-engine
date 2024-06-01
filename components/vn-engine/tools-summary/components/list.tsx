@@ -20,13 +20,13 @@ export function SlidesCarousel({ slides }: { slides: Slides[] }) {
           if (isConversation(slide.dialogue)) {
             const conversation = slide.dialogue;
             const leftCharacter = slide.spawnedCharacters.find(
-              (d) => d.xPos === 0
+              (d) => d.xPos === 0 && d.name !== "ME"
             );
             const middleCharacter = slide.spawnedCharacters.find(
-              (d) => d.xPos === 0.5
+              (d) => d.xPos === 0.5 && d.name !== "ME"
             );
             const rightCharacter = slide.spawnedCharacters.find(
-              (d) => d.xPos === 1
+              (d) => d.xPos === 1 && d.name !== "ME"
             );
             const activeBackground = slide.activeBackground;
             return (
@@ -52,40 +52,34 @@ export function SlidesCarousel({ slides }: { slides: Slides[] }) {
                       )}
                       <div className="w-full h-full grid grid-cols-3">
                         <div className="flex justify-center items-end">
-                          {conversation.speaker &&
-                            conversation.speaker.name !== "ME" &&
-                            leftCharacter && (
-                              <Image
-                                alt="speaker"
-                                src={leftCharacter.image.src}
-                                width={85}
-                                height={85}
-                              />
-                            )}
+                          {conversation.speaker && leftCharacter && (
+                            <Image
+                              alt="speaker"
+                              src={leftCharacter.image.src}
+                              width={85}
+                              height={85}
+                            />
+                          )}
                         </div>
                         <div className="flex justify-center items-end">
-                          {conversation.speaker &&
-                            conversation.speaker.name !== "ME" &&
-                            middleCharacter && (
-                              <Image
-                                alt="speaker"
-                                src={middleCharacter.image.src}
-                                width={85}
-                                height={85}
-                              />
-                            )}
+                          {conversation.speaker && middleCharacter && (
+                            <Image
+                              alt="speaker"
+                              src={middleCharacter.image.src}
+                              width={85}
+                              height={85}
+                            />
+                          )}
                         </div>
                         <div className="flex justify-center items-end">
-                          {conversation.speaker &&
-                            conversation.speaker.name !== "ME" &&
-                            rightCharacter && (
-                              <Image
-                                alt="speaker"
-                                src={rightCharacter.image.src}
-                                width={85}
-                                height={85}
-                              />
-                            )}
+                          {conversation.speaker && rightCharacter && (
+                            <Image
+                              alt="speaker"
+                              src={rightCharacter.image.src}
+                              width={85}
+                              height={85}
+                            />
+                          )}
                         </div>
                       </div>
                       <div className="w-full absolute bottom-0 h-14 bg-black/50 p-4 flex flex-col justify-center items-start">

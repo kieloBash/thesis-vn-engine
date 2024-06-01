@@ -97,6 +97,8 @@ const ConversationInput = () => {
       activeBackground,
       spawnedCharacters: newSpawnedCharacter,
     };
+    
+    console.log(newSlide);
     setVisualNovel([...visualNovel, newSlide]);
     resetForm();
   }
