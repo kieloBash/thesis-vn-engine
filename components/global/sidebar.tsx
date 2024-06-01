@@ -15,12 +15,13 @@ import { SidebarButtonsType } from "@/types";
 import MoreCharacters from "./sidebar-template/character-template";
 import MoreBackgrounds from "./sidebar-template/background-template";
 import MoreCommands from "./sidebar-template/commands-template";
+import MoreActiveCharacters from "../vn-engine/sidebars/character-template";
 
 const Sidebar = () => {
   const BTNS = [
-    { icon: User2, tip: "Characters" },
-    { icon: ImageDownIcon, tip: "Background" },
     { icon: CommandIcon, tip: "Commands" },
+    { icon: ImageDownIcon, tip: "Background" },
+    { icon: User2, tip: "Characters" },
   ];
 
   const { active, setActive, toggleSidebar, setToggleSidebar } =
@@ -61,7 +62,7 @@ const Sidebar = () => {
             <X />
           </Button>
           {active === "Characters" ? (
-            <MoreCharacters />
+            <MoreActiveCharacters />
           ) : active === "Background" ? (
             <MoreBackgrounds />
           ) : (

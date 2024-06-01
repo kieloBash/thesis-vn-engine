@@ -4,6 +4,7 @@ import "./globals.css";
 import Sidebar from "@/components/global/sidebar";
 import SidebarProvider from "@/providers/sidebar";
 import StoryProvider from "@/providers/story";
+import BuilderProvider from "@/providers/builder";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -22,10 +23,12 @@ export default function RootLayout({
       <body className={inter.className}>
         <SidebarProvider>
           <StoryProvider>
-            <main className="min-h-screen w-full flex bg-white">
-              <Sidebar />
-              {children}
-            </main>
+            <BuilderProvider>
+              <main className="min-h-screen w-full flex bg-white">
+                <Sidebar />
+                {children}
+              </main>
+            </BuilderProvider>
           </StoryProvider>
         </SidebarProvider>
       </body>

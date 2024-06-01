@@ -22,7 +22,7 @@ export const useSidebarContext = () => React.useContext(SidebarContext);
 
 const SidebarProvider = ({ children }: { children: React.ReactNode }) => {
   const [toggleSidebar, setToggleSidebar] = React.useState<boolean>(true);
-  const [active, setActive] = React.useState<SidebarButtonsType>("Characters");
+  const [active, setActive] = React.useState<SidebarButtonsType>("Commands");
 
   return (
     <SidebarContext.Provider

@@ -7,6 +7,7 @@ import {
   Speaker,
 } from "@/types";
 import { ArgumentTaxEnum, DisplayArg, FullArgument } from "@/types/new-types";
+import { Character } from "@/types/vn-engine/main-types";
 
 export const isBackgroundCommand = (
   command: Command
@@ -90,5 +91,17 @@ export function isSpawnedSpeaker({
 }) {
   const temp = arr.find((s) => s.name === speaker.name);
   if (temp) return true;
-  else false;
+  else return false;
+}
+
+export function isSpawnedCharacter({
+  speaker,
+  arr,
+}: {
+  speaker: Character | undefined;
+  arr: Character[];
+}) {
+  const temp = arr.find((s) => s.name === speaker?.name);
+  if (temp) return true;
+  else return false;
 }
