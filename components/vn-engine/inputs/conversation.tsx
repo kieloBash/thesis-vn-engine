@@ -94,7 +94,7 @@ const ConversationInput = () => {
     const newSlide = {
       id: generateRandomKey(16),
       dialogue: newData,
-      activeBackground,
+      // activeBackground,
       spawnedCharacters: newSpawnedCharacter,
     };
     

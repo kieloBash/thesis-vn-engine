@@ -48,7 +48,7 @@ const MoreBackgrounds = () => {
                   const newSlide: Slides = {
                     id: generateRandomKey(16),
                     dialogue: newData,
-                    activeBackground: bg,
+                    // activeBackground: bg,
                     spawnedCharacters,
                   };
                   setVisualNovel([...visualNovel, newSlide]);

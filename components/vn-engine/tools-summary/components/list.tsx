@@ -1,4 +1,5 @@
-import * as React from "react";
+"use client";
+import { useMemo, useState } from "react";
 
 import { Card, CardContent } from "@/components/ui/card";
 import {
@@ -9,14 +10,38 @@ import {
   CarouselPrevious,
 } from "@/components/ui/carousel";
 import { Slides } from "@/providers/builder";
-import { isConversation } from "@/types/vn-engine/main-types";
+import { Background, isConversation } from "@/types/vn-engine/main-types";
 import Image from "next/image";
+import {
+  isAddBackgroundCommand,
+  isCommand,
+} from "@/types/vn-engine/command-types";
 
 export function SlidesCarousel({ slides }: { slides: Slides[] }) {
+  const previewSlides = useMemo(() => {
+    let newSlides: Slides[] = [];
+    let activeBG: Background | undefined = undefined;
+    slides.forEach((slide) => {
+      let newSlide: Slides;
+      if (isConversation(slide.dialogue)) {
+        newSlide = {
+          ...slide,
+          activeBackground: activeBG,
+        };
+        newSlides.push(newSlide);
+      } else if (isCommand(slide.dialogue)) {
+        if (isAddBackgroundCommand(slide.dialogue)) {
+          activeBG = slide.dialogue.background;
+        }
+      }
+    });
+    return newSlides;
+  }, [slides]);
+
   return (
     <Carousel className="w-full">
       <CarouselContent className="-ml-1">
-        {slides.map((slide, index) => {
+        {previewSlides.map((slide, index) => {
           if (isConversation(slide.dialogue)) {
             const conversation = slide.dialogue;
             const leftCharacter = slide.spawnedCharacters.find(
@@ -28,7 +53,7 @@ export function SlidesCarousel({ slides }: { slides: Slides[] }) {
             const rightCharacter = slide.spawnedCharacters.find(
               (d) => d.xPos === 1 && d.name !== "ME"
             );
-            const activeBackground = slide.activeBackground;
+
             return (
               <CarouselItem
                 key={index}
@@ -37,10 +62,10 @@ export function SlidesCarousel({ slides }: { slides: Slides[] }) {
                 <div className="p-1">
                   <Card className="overflow-hidden bg-transparent">
                     <CardContent className="flex h-60 relative items-center justify-center p-6">
-                      {activeBackground ? (
+                      {slide.activeBackground ? (
                         <div className="absolute -z-10 w-full h-full">
                           <Image
-                            src={activeBackground?.image?.src}
+                            src={slide.activeBackground?.image?.src}
                             alt="BG"
                             fill
                           />
