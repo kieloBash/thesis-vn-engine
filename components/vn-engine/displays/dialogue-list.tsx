@@ -6,6 +6,10 @@ import React from "react";
 import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import ToolsSummary from "../tools-summary/summary";
+import {
+  isAddBackgroundCommand,
+  isCommand,
+} from "@/types/vn-engine/command-types";
 
 const DialogueList = () => {
   const { visualNovel } = useBuilderContext();
@@ -44,6 +48,31 @@ const DialogueList = () => {
                 <div className=""></div>
               </div>
             );
+          } else if (isCommand(single.dialogue)) {
+            if (isAddBackgroundCommand(single.dialogue)) {
+              const bgCommand = single.dialogue;
+              return (
+                <div
+                  key={single.id}
+                  className="w-full mt-2 bg-white min-h-20 p-2 rounded-md shadow-sm flex flex-col justify-center items-start"
+                >
+                  <div className="flex gap-2 justify-start items-center">
+                    <Avatar>
+                      <AvatarImage
+                        src={bgCommand.background?.image?.src}
+                        alt="BG"
+                        className="object-cover object-top bg-main-100 border"
+                      />
+                      <AvatarFallback>CN</AvatarFallback>
+                    </Avatar>
+                    <div className="flex gap-2">
+                      <span className="">Add Background Scene:</span>
+                      <h3 className="font-bold">{bgCommand.background.name}</h3>
+                    </div>
+                  </div>
+                </div>
+              );
+            }
           }
         })}
       </ScrollArea>

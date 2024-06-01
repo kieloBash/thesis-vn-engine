@@ -12,10 +12,9 @@ import { TooltipButton } from "./tooltip-btn";
 import { useSidebarContext } from "@/providers/sidebar";
 import clsx from "clsx";
 import { SidebarButtonsType } from "@/types";
-import MoreCharacters from "./sidebar-template/character-template";
-import MoreBackgrounds from "./sidebar-template/background-template";
 import MoreCommands from "./sidebar-template/commands-template";
 import MoreActiveCharacters from "../vn-engine/sidebars/character-template";
+import MoreBackgrounds from "../vn-engine/sidebars/background-template";
 
 const Sidebar = () => {
   const BTNS = [

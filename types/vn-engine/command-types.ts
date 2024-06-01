@@ -44,6 +44,12 @@ interface CharacterCommand extends BaseCommand {
 export interface AddBackground extends BackgroundCommand {
   type: CommandsEnum.AddBackground;
 }
+export function isAddBackgroundCommand(
+  command: Command
+): command is AddBackground {
+  return command.type === CommandsEnum.AddBackground;
+}
+
 export interface RemoveBackground extends BackgroundCommand {
   type: CommandsEnum.RemoveBackground;
 }

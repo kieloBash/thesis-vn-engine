@@ -28,6 +28,7 @@ export function SlidesCarousel({ slides }: { slides: Slides[] }) {
             const rightCharacter = slide.spawnedCharacters.find(
               (d) => d.xPos === 1
             );
+            const activeBackground = slide.activeBackground;
             return (
               <CarouselItem
                 key={index}
@@ -36,7 +37,19 @@ export function SlidesCarousel({ slides }: { slides: Slides[] }) {
                 <div className="p-1">
                   <Card className="overflow-hidden bg-transparent">
                     <CardContent className="flex h-60 relative items-center justify-center p-6">
-                      <div className="bg-slate-500 absolute w-full h-full -z-10" />
+                      {activeBackground ? (
+                        <div className="absolute -z-10 w-full h-full">
+                          <Image
+                            src={activeBackground?.image?.src}
+                            alt="BG"
+                            fill
+                          />
+                        </div>
+                      ) : (
+                        <>
+                          <div className="bg-slate-500 absolute w-full h-full -z-10" />
+                        </>
+                      )}
                       <div className="w-full h-full grid grid-cols-3">
                         <div className="flex justify-center items-end">
                           {conversation.speaker &&
