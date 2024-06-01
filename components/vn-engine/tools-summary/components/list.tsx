@@ -15,6 +15,7 @@ import Image from "next/image";
 import {
   isAddBackgroundCommand,
   isCommand,
+  isRemoveBackgroundCommand,
 } from "@/types/vn-engine/command-types";
 
 export function SlidesCarousel({ slides }: { slides: Slides[] }) {
@@ -32,6 +33,8 @@ export function SlidesCarousel({ slides }: { slides: Slides[] }) {
       } else if (isCommand(slide.dialogue)) {
         if (isAddBackgroundCommand(slide.dialogue)) {
           activeBG = slide.dialogue.background;
+        } else if (isRemoveBackgroundCommand(slide.dialogue)) {
+          activeBG = undefined;
         }
       }
     });

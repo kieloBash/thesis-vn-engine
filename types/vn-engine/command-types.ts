@@ -27,9 +27,10 @@ export function isCommand(dialogue: Dialogue): dialogue is Command {
 interface BaseCommand {
   id: string;
   dialogueType: DialogueType;
+  blank?: boolean;
 }
 interface BackgroundCommand extends BaseCommand {
-  background: Background;
+  background?: Background;
   timer?: number;
   transition?: TransitionType;
 }
@@ -53,6 +54,12 @@ export function isAddBackgroundCommand(
 export interface RemoveBackground extends BackgroundCommand {
   type: CommandsEnum.RemoveBackground;
 }
+export function isRemoveBackgroundCommand(
+  command: Command
+): command is RemoveBackground {
+  return command.type === CommandsEnum.RemoveBackground;
+}
+
 export interface PlayMusic extends MusicCommand {
   type: CommandsEnum.PlayMusic;
 }

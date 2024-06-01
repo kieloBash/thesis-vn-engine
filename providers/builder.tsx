@@ -1,4 +1,5 @@
 "use client";
+import { CommandsEnum } from "@/types/vn-engine/command-types";
 import { Background, Character, Dialogue } from "@/types/vn-engine/main-types";
 import * as React from "react";
 export interface SpawnedCharacterType extends Character {
@@ -20,6 +21,12 @@ type ContextType = {
   setSpawnedCharacters: (temp: SpawnedCharacterType[]) => void;
   activeBackground: Background | undefined;
   setActiveBackground: (temp: Background | undefined) => void;
+
+  // for toggle
+  selectedCommand: { command: CommandsEnum; id: string } | undefined;
+  setSelectedCommand: (
+    temp: { command: CommandsEnum; id: string } | undefined
+  ) => void;
 };
 
 const Context = React.createContext<ContextType>({
@@ -30,6 +37,12 @@ const Context = React.createContext<ContextType>({
   setSpawnedCharacters: (temp: SpawnedCharacterType[]) => {},
   activeBackground: undefined,
   setActiveBackground: (temp: Background | undefined) => {},
+
+  // for toggle
+  selectedCommand: undefined,
+  setSelectedCommand: (
+    temp: { command: CommandsEnum; id: string } | undefined
+  ) => {},
 });
 
 export const useBuilderContext = () => React.useContext(Context);
@@ -42,6 +55,9 @@ const BuilderProvider = ({ children }: { children: React.ReactNode }) => {
     Background | undefined
   >(undefined);
   const [visualNovel, setVisualNovel] = React.useState<Slides[]>([]);
+  const [selectedCommand, setSelectedCommand] = React.useState<
+    { command: CommandsEnum; id: string } | undefined
+  >(undefined);
 
   return (
     <Context.Provider
@@ -53,6 +69,10 @@ const BuilderProvider = ({ children }: { children: React.ReactNode }) => {
         setSpawnedCharacters,
         activeBackground,
         setActiveBackground,
+
+        // for toggle
+        selectedCommand,
+        setSelectedCommand,
       }}
     >
       {children}

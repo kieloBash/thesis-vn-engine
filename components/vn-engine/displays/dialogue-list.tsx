@@ -1,15 +1,9 @@
 "use client";
 import { useBuilderContext } from "@/providers/builder";
-import { isConversation } from "@/types/vn-engine/main-types";
-import React, { useEffect, useState } from "react";
+import React from "react";
 
-import { Avatar, AvatarFallback, AvatarImage } from "@/components/ui/avatar";
 import { ScrollArea } from "@/components/ui/scroll-area";
 import ToolsSummary from "../tools-summary/summary";
-import {
-  isAddBackgroundCommand,
-  isCommand,
-} from "@/types/vn-engine/command-types";
 
 import { closestCorners, DndContext } from "@dnd-kit/core";
 import {
@@ -17,11 +11,17 @@ import {
   SortableContext,
   verticalListSortingStrategy,
 } from "@dnd-kit/sortable";
-import ConversationCard from "../cards/conversation-card";
 import MainCard from "../cards/main-card";
+import {
+  Command,
+  isCommand,
+  isRemoveBackgroundCommand,
+} from "@/types/vn-engine/command-types";
+import { Dialogue } from "@/types/vn-engine/main-types";
 
 const DialogueList = () => {
-  const { visualNovel, setVisualNovel } = useBuilderContext();
+  const { visualNovel, setVisualNovel, setSelectedCommand } =
+    useBuilderContext();
 
   const getPos = (id: string) => visualNovel.findIndex((d) => d.id === id);
 
@@ -36,9 +36,17 @@ const DialogueList = () => {
     const newArr = arrayMove(visualNovel, originalPos, newPos);
     setVisualNovel(newArr);
   };
+
+  function handleClickCommand(data: Dialogue, id: string) {
+    if (!isCommand(data)) return;
+
+    if (isRemoveBackgroundCommand(data)) {
+      setSelectedCommand({ command: data.type, id });
+    }
+  }
   return (
     <div className="col-span-4 overflow-hidden flex flex-col h-screen py-8 gap-8">
-      <ScrollArea className="flex-1">
+      <ScrollArea className="flex-1 px-4">
         <DndContext
           collisionDetection={closestCorners}
           onDragEnd={handleDragEnd}
@@ -48,14 +56,34 @@ const DialogueList = () => {
             strategy={verticalListSortingStrategy}
           >
             {visualNovel.map((single) => {
-              return (
-                <MainCard
-                  id={single.id}
-                  slide={single}
-                  data={single.dialogue}
-                  key={single.id}
-                />
-              );
+              if (isCommand(single.dialogue) && single.dialogue.blank) {
+                return (
+                  <div
+                    className="w-full h-8 rounded-sm shadow-sm transition-colors bg-white mt-2 hover:bg-slate-100 peer"
+                    key={single.id}
+                  >
+                    <button
+                      className="w-full h-full p-0 flex flex-col justify-center items-center"
+                      type="button"
+                      onClick={() => {
+                        handleClickCommand(single.dialogue, single.id);
+                      }}
+                    >
+                      <p className="w-full text-center font-mono">
+                        Press to add Command
+                      </p>
+                    </button>
+                  </div>
+                );
+              } else
+                return (
+                  <MainCard
+                    id={single.id}
+                    slide={single}
+                    data={single.dialogue}
+                    key={single.id}
+                  />
+                );
             })}
           </SortableContext>
         </DndContext>

@@ -17,7 +17,7 @@ const AddBackgroundCommandCard = ({ data }: { data: AddBackground }) => {
         </Avatar>
         <div className="flex gap-2">
           <span className="">Add Background Scene:</span>
-          <h3 className="font-bold">{data.background.name}</h3>
+          <h3 className="font-bold">{data.background?.name}</h3>
         </div>
       </div>
     </>
