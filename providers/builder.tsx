@@ -24,9 +24,11 @@ type ContextType = {
 
   // for toggle
   selectedSlide: Slides | undefined;
-  selectedCommand: { command: CommandsEnum; id: string } | undefined;
+  selectedCommand:
+    | { command?: CommandsEnum; id: string; isConvo?: boolean }
+    | undefined;
   setSelectedCommand: (
-    temp: { command: CommandsEnum; id: string } | undefined
+    temp: { command?: CommandsEnum; id: string; isConvo?: boolean } | undefined
   ) => void;
 
   // for edit
@@ -47,7 +49,7 @@ const Context = React.createContext<ContextType>({
   selectedSlide: undefined,
   selectedCommand: undefined,
   setSelectedCommand: (
-    temp: { command: CommandsEnum; id: string } | undefined
+    temp: { command?: CommandsEnum; id: string; isConvo?: boolean } | undefined
   ) => {},
 
   // for edit
@@ -66,7 +68,7 @@ const BuilderProvider = ({ children }: { children: React.ReactNode }) => {
   >(undefined);
   const [visualNovel, setVisualNovel] = React.useState<Slides[]>([]);
   const [selectedCommand, setSelectedCommand] = React.useState<
-    { command: CommandsEnum; id: string } | undefined
+    { command?: CommandsEnum; id: string; isConvo?: boolean } | undefined
   >(undefined);
   const [toggleEdits, setToggleEdits] = React.useState<boolean>(false);
 

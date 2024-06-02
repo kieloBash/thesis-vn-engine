@@ -5,7 +5,8 @@ import { PreviewModal } from "./preview";
 import { useBuilderContext } from "@/providers/builder";
 
 const ToolsSummary = () => {
-  const { toggleEdits, setToggleEdits } = useBuilderContext();
+  const { toggleEdits, setToggleEdits, setSelectedCommand } =
+    useBuilderContext();
   return (
     <div className="h-20 bg-white flex justify-between items-center px-4">
       {toggleEdits ? (
@@ -17,6 +18,7 @@ const ToolsSummary = () => {
               variant={"destructive"}
               onClick={() => {
                 setToggleEdits(false);
+                setSelectedCommand(undefined);
               }}
             >
               Done Edit

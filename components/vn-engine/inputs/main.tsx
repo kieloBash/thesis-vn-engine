@@ -6,6 +6,7 @@ import { CommandsEnum } from "@/types/vn-engine/command-types";
 import RemoveBackgroundInput from "./commands-input/removeBackground";
 import MoveCharacterInput from "./commands-input/moveCharacter";
 import AddBackgroundInput from "./commands-input/addBackground";
+import EditConversationInput from "./edit-conversation";
 
 const MainInputs = () => {
   const { selectedCommand } = useBuilderContext();
@@ -13,15 +14,23 @@ const MainInputs = () => {
     <div className="col-span-3 bg-white">
       {selectedCommand ? (
         <>
-          {selectedCommand.command === CommandsEnum.AddBackground ? (
-            <AddBackgroundInput />
-          ) : null}
-          {selectedCommand.command === CommandsEnum.RemoveBackground ? (
-            <RemoveBackgroundInput />
-          ) : null}
-          {selectedCommand.command === CommandsEnum.MoveCharacter ? (
-            <MoveCharacterInput />
-          ) : null}
+          {selectedCommand?.isConvo ? (
+            <>
+              <EditConversationInput />
+            </>
+          ) : (
+            <>
+              {selectedCommand?.command === CommandsEnum.AddBackground ? (
+                <AddBackgroundInput />
+              ) : null}
+              {selectedCommand?.command === CommandsEnum.RemoveBackground ? (
+                <RemoveBackgroundInput />
+              ) : null}
+              {selectedCommand?.command === CommandsEnum.MoveCharacter ? (
+                <MoveCharacterInput />
+              ) : null}
+            </>
+          )}
         </>
       ) : (
         <>
