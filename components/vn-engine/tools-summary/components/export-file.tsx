@@ -163,7 +163,7 @@ export function ExportModal() {
     <Dialog open={open} onOpenChange={setopen}>
       <DialogTrigger asChild>
         <Button type="button" size={"sm"}>
-          Save
+          Download
         </Button>
       </DialogTrigger>
       <DialogContent className="sm:max-w-[425px]">
