@@ -7,6 +7,7 @@ export interface Conversation {
   speaker: Character;
   line: string;
   justSpawned: boolean;
+  isHidden?: boolean;
 
   altName?: string;
   startXPos?: number;

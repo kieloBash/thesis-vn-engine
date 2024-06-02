@@ -24,6 +24,7 @@ import clsx from "clsx";
 import { useBuilderContext } from "@/providers/builder";
 import { generateRandomKey, isSpawnedCharacter } from "@/helpers";
 import Image from "next/image";
+import { Checkbox } from "@/components/ui/checkbox";
 
 const ConversationInput = () => {
   const {
@@ -38,6 +39,7 @@ const ConversationInput = () => {
   const [altName, setAltName] = useState<string>("");
   const [currDialogue, setcurrDialogue] = useState("");
   const [xPos, setxPos] = useState(0.5);
+  const [isHidden, setisHidden] = useState(false);
 
   const justSpawned = useMemo(() => {
     return isSpawnedCharacter({ speaker, arr: spawnedCharacters });
@@ -49,6 +51,7 @@ const ConversationInput = () => {
       : "mt-14 h-full w-full flex flex-col gap-2 px-4"
   );
   const flagForPreview = speaker && speaker.name !== "ME" && !justSpawned;
+  const flagForDisplay = speaker;
 
   // UTILITIES
   function resetForm() {
@@ -82,6 +85,7 @@ const ConversationInput = () => {
       altName,
       startXPos: xPos,
       dialogueType: "conversation",
+      isHidden,
     };
     let newSpawnedCharacter;
     if (!justSpawned) {
@@ -97,8 +101,7 @@ const ConversationInput = () => {
       // activeBackground,
       spawnedCharacters: newSpawnedCharacter,
     };
-    
-    console.log(newSlide);
+
     setVisualNovel([...visualNovel, newSlide]);
     resetForm();
   }
@@ -153,6 +156,29 @@ const ConversationInput = () => {
             </SelectContent>
           </Select>
         </div>
+        {speaker && speaker.name !== "ME" && (
+          <div className="items-top flex space-x-2 mt-4 px-2">
+            <Checkbox
+              id="visible"
+              checked={!isHidden}
+              onCheckedChange={(e) => {
+                if (e) {
+                  setisHidden(false);
+                } else {
+                  setisHidden(true);
+                }
+              }}
+            />
+            <div className="grid gap-1.5 leading-none">
+              <label
+                htmlFor="visible"
+                className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+              >
+                Visible
+              </label>
+            </div>
+          </div>
+        )}
         <div className="grid gap-0.5 mt-4 px-2">
           <div className="flex gap-2 justify-start items-center">
             <Label className="uppercase font-medium">Alternative Name</Label>
@@ -215,34 +241,46 @@ const ConversationInput = () => {
         <div className="w-full h-80 px-10 mb-14 relative overflow-hidden">
           <div className="w-full h-full overflow-hidden relative border rounded-lg shadow-sm bg-slate-800 grid grid-cols-3 divide-x divide-dashed">
             <div className="flex justify-center items-end">
-              {speaker && speaker.name !== "ME" && xPos === 0 && (
-                <Image
-                  alt="speaker"
-                  src={speaker.image.src}
-                  width={85}
-                  height={85}
-                />
-              )}
+              {speaker &&
+                speaker.name !== "ME" &&
+                xPos === 0 &&
+                !isHidden &&
+                !justSpawned && (
+                  <Image
+                    alt="speaker"
+                    src={speaker.image.src}
+                    width={85}
+                    height={85}
+                  />
+                )}
             </div>
             <div className="flex justify-center items-end">
-              {speaker && speaker.name !== "ME" && xPos === 0.5 && (
-                <Image
-                  alt="speaker"
-                  src={speaker.image.src}
-                  width={85}
-                  height={85}
-                />
-              )}
+              {speaker &&
+                speaker.name !== "ME" &&
+                xPos === 0.5 &&
+                !isHidden &&
+                !justSpawned && (
+                  <Image
+                    alt="speaker"
+                    src={speaker.image.src}
+                    width={85}
+                    height={85}
+                  />
+                )}
             </div>
             <div className="flex justify-center items-end">
-              {speaker && speaker.name !== "ME" && xPos === 1 && (
-                <Image
-                  alt="speaker"
-                  src={speaker.image?.src}
-                  width={85}
-                  height={85}
-                />
-              )}
+              {speaker &&
+                speaker.name !== "ME" &&
+                xPos === 1 &&
+                !isHidden &&
+                !justSpawned && (
+                  <Image
+                    alt="speaker"
+                    src={speaker.image?.src}
+                    width={85}
+                    height={85}
+                  />
+                )}
             </div>
 
             <div className="w-full absolute bottom-0 h-14 bg-black/50 p-4 flex flex-col justify-center items-start">
@@ -250,7 +288,7 @@ const ConversationInput = () => {
                 {altName !== "" ? altName : speaker.name.split(" ")[0]}
               </span>
               <p className="flex-1 flex-shrink-0 text-[10px] text-white text-wrap">
-                {currDialogue}
+                {currDialogue !== "" ? currDialogue : "Dialogue goes here..."}
               </p>
             </div>
           </div>

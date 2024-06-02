@@ -35,7 +35,6 @@ const MoreBackgrounds = () => {
   } = useBuilderContext();
 
   const previewSlides = usePreview({ slides: visualNovel });
-  console.log(previewSlides)
   return (
     <div className="w-full h-full flex flex-col justify-start items-center">
       <h2 className="text-center text-2xl font-bold">Preview</h2>
@@ -44,15 +43,17 @@ const MoreBackgrounds = () => {
           {previewSlides.map((slide, index) => {
             if (isConversation(slide.dialogue)) {
               const conversation = slide.dialogue;
-              const leftCharacter = slide.spawnedCharacters.find(
+              const leftCharacters = slide.spawnedCharacters.filter(
                 (d) => d.xPos === 0 && d.name !== "ME"
               );
-              const middleCharacter = slide.spawnedCharacters.find(
+              const middleCharacters = slide.spawnedCharacters.filter(
                 (d) => d.xPos === 0.5 && d.name !== "ME"
               );
-              const rightCharacter = slide.spawnedCharacters.find(
+              const rightCharacters = slide.spawnedCharacters.filter(
                 (d) => d.xPos === 1 && d.name !== "ME"
               );
+              const isHidden = slide.dialogue.isHidden;
+              console.log(conversation.speaker);
 
               return (
                 <Card key={index} className="overflow-hidden bg-transparent">
@@ -72,34 +73,73 @@ const MoreBackgrounds = () => {
                     )}
                     <div className="w-full h-full grid grid-cols-3 relative">
                       <div className="flex justify-center items-end">
-                        {conversation.speaker && leftCharacter && (
-                          <Image
-                            alt="speaker"
-                            src={leftCharacter.image.src}
-                            width={60}
-                            height={60}
-                          />
-                        )}
+                        {leftCharacters.length && conversation.speaker ? (
+                          <>
+                            {leftCharacters.map((char, idx) => {
+                              if (
+                                char.name === conversation.speaker.name &&
+                                isHidden
+                              ) {
+                              } else
+                                return (
+                                  <div key={idx} className="absolute">
+                                    <Image
+                                      alt="speaker"
+                                      src={char?.image?.src}
+                                      width={60}
+                                      height={60}
+                                    />
+                                  </div>
+                                );
+                            })}
+                          </>
+                        ) : null}
                       </div>
                       <div className="flex justify-center items-end">
-                        {conversation.speaker && middleCharacter && (
-                          <Image
-                            alt="speaker"
-                            src={middleCharacter.image.src}
-                            width={60}
-                            height={60}
-                          />
-                        )}
+                        {middleCharacters.length && conversation.speaker ? (
+                          <>
+                            {middleCharacters.map((char, idx) => {
+                              if (
+                                char.name === conversation.speaker.name &&
+                                isHidden
+                              ) {
+                              } else
+                                return (
+                                  <div key={idx} className="absolute">
+                                    <Image
+                                      alt="speaker"
+                                      src={char?.image?.src}
+                                      width={60}
+                                      height={60}
+                                    />
+                                  </div>
+                                );
+                            })}
+                          </>
+                        ) : null}
                       </div>
                       <div className="flex justify-center items-end">
-                        {conversation.speaker && rightCharacter && (
-                          <Image
-                            alt="speaker"
-                            src={rightCharacter.image.src}
-                            width={60}
-                            height={60}
-                          />
-                        )}
+                        {rightCharacters.length && conversation.speaker ? (
+                          <>
+                            {rightCharacters.map((char, idx) => {
+                              if (
+                                char.name === conversation.speaker.name &&
+                                isHidden
+                              ) {
+                              } else
+                                return (
+                                  <div key={idx} className="absolute">
+                                    <Image
+                                      alt="speaker"
+                                      src={char?.image?.src}
+                                      width={60}
+                                      height={60}
+                                    />
+                                  </div>
+                                );
+                            })}
+                          </>
+                        ) : null}
                       </div>
                     </div>
                     <div className="w-full absolute bottom-0 h-14 bg-black/50 p-4 flex flex-col justify-center items-start">
