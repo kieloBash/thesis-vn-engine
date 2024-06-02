@@ -54,12 +54,12 @@ const MainCard = ({
   }
 
   function handleEditCard() {
-    if (!selectedCommand) {
+    if (selectedCommand && selectedCommand.id === id) {
+      setSelectedCommand(undefined);
+    } else {
       if (!isCommand(data)) {
         setSelectedCommand({ id, isConvo: true });
       } else setSelectedCommand({ command: data.type, id });
-    } else {
-      setSelectedCommand(undefined);
     }
   }
 
