@@ -3,6 +3,7 @@ import { Button } from "@/components/ui/button";
 import React from "react";
 import { PreviewModal } from "./preview";
 import { useBuilderContext } from "@/providers/builder";
+import { ExportModal } from "./components/export-file";
 
 const ToolsSummary = () => {
   const { toggleEdits, setToggleEdits, setSelectedCommand } =
@@ -39,7 +40,7 @@ const ToolsSummary = () => {
             </Button>
             {/* <PreviewModal /> */}
             <Button size={"sm"}>Upload</Button>
-            <Button size={"sm"}>Save</Button>
+            <ExportModal />
           </div>
         </>
       )}
