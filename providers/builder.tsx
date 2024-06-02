@@ -23,6 +23,7 @@ type ContextType = {
   setActiveBackground: (temp: Background | undefined) => void;
 
   // for toggle
+  selectedSlide: Slides | undefined;
   selectedCommand: { command: CommandsEnum; id: string } | undefined;
   setSelectedCommand: (
     temp: { command: CommandsEnum; id: string } | undefined
@@ -43,6 +44,7 @@ const Context = React.createContext<ContextType>({
   setActiveBackground: (temp: Background | undefined) => {},
 
   // for toggle
+  selectedSlide: undefined,
   selectedCommand: undefined,
   setSelectedCommand: (
     temp: { command: CommandsEnum; id: string } | undefined
@@ -68,6 +70,10 @@ const BuilderProvider = ({ children }: { children: React.ReactNode }) => {
   >(undefined);
   const [toggleEdits, setToggleEdits] = React.useState<boolean>(false);
 
+  const selectedSlide = React.useMemo(() => {
+    return visualNovel.find((d) => d.id === selectedCommand?.id);
+  }, [visualNovel, selectedCommand]);
+
   return (
     <Context.Provider
       value={{
@@ -84,6 +90,7 @@ const BuilderProvider = ({ children }: { children: React.ReactNode }) => {
         setSelectedCommand,
 
         // for edit
+        selectedSlide,
         toggleEdits,
         setToggleEdits,
       }}

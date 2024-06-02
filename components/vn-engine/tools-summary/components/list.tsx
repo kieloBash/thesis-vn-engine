@@ -1,5 +1,4 @@
 "use client";
-import { useMemo, useState } from "react";
 
 import { Card, CardContent } from "@/components/ui/card";
 import {
@@ -10,36 +9,12 @@ import {
   CarouselPrevious,
 } from "@/components/ui/carousel";
 import { Slides } from "@/providers/builder";
-import { Background, isConversation } from "@/types/vn-engine/main-types";
+import { isConversation } from "@/types/vn-engine/main-types";
 import Image from "next/image";
-import {
-  isAddBackgroundCommand,
-  isCommand,
-  isRemoveBackgroundCommand,
-} from "@/types/vn-engine/command-types";
+import usePreview from "@/components/hooks/usePreview";
 
 export function SlidesCarousel({ slides }: { slides: Slides[] }) {
-  const previewSlides = useMemo(() => {
-    let newSlides: Slides[] = [];
-    let activeBG: Background | undefined = undefined;
-    slides.forEach((slide) => {
-      let newSlide: Slides;
-      if (isConversation(slide.dialogue)) {
-        newSlide = {
-          ...slide,
-          activeBackground: activeBG,
-        };
-        newSlides.push(newSlide);
-      } else if (isCommand(slide.dialogue)) {
-        if (isAddBackgroundCommand(slide.dialogue)) {
-          activeBG = slide.dialogue.background;
-        } else if (isRemoveBackgroundCommand(slide.dialogue)) {
-          activeBG = undefined;
-        }
-      }
-    });
-    return newSlides;
-  }, [slides]);
+  const previewSlides = usePreview({ slides });
 
   return (
     <Carousel className="w-full">

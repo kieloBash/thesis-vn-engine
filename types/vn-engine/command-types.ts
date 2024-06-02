@@ -38,7 +38,7 @@ interface MusicCommand extends BaseCommand {
   audio: Audio;
 }
 interface CharacterCommand extends BaseCommand {
-  speaker: Speaker;
+  speaker?: Speaker;
 }
 
 // Specific command interfaces
@@ -68,10 +68,16 @@ export interface StopMusic extends MusicCommand {
 }
 export interface MoveCharacter extends CharacterCommand {
   type: CommandsEnum.MoveCharacter;
-  xPos: number;
+  xPos?: number;
   speed_duration?: number;
   isInstant?: boolean;
 }
+export function isMoveCharacterCommand(
+  command: Command
+): command is MoveCharacter {
+  return command.type === CommandsEnum.MoveCharacter;
+}
+
 export interface HideCharacter extends CharacterCommand {
   type: CommandsEnum.HideCharacter;
 
@@ -92,6 +98,7 @@ export type Command =
   | RemoveBackground
   | PlayMusic
   | StopMusic
+  | MoveCharacter
   | HideCharacter
   | PlayLowerOrderGame
   | PlayHigherOrderGame;

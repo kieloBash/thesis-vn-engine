@@ -7,6 +7,7 @@ import { generateRandomKey } from "@/helpers";
 import {
   Command,
   CommandsEnum,
+  MoveCharacter,
   RemoveBackground,
 } from "@/types/vn-engine/command-types";
 import { Slides, useBuilderContext } from "@/providers/builder";
@@ -22,13 +23,20 @@ const MoreCommands = () => {
       case CommandsEnum.AddBackground:
         break;
       case CommandsEnum.RemoveBackground:
-        const temp: RemoveBackground = {
+        const remBG: RemoveBackground = {
           id: generateRandomKey(),
           type: CommandsEnum.RemoveBackground,
           dialogueType: "command",
-          blank: false,
         };
-        newData = temp;
+        newData = remBG;
+        break;
+      case CommandsEnum.MoveCharacter:
+        const moveChar: MoveCharacter = {
+          id: generateRandomKey(),
+          type: CommandsEnum.MoveCharacter,
+          dialogueType: "command",
+        };
+        newData = moveChar;
         break;
       default:
         break;

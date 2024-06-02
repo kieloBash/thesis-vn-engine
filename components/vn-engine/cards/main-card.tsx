@@ -8,6 +8,7 @@ import {
   Command,
   isAddBackgroundCommand,
   isCommand,
+  isMoveCharacterCommand,
   isRemoveBackgroundCommand,
 } from "@/types/vn-engine/command-types";
 import { Slides, useBuilderContext } from "@/providers/builder";
@@ -16,6 +17,7 @@ import AddBackgroundCommandCard from "./add-background-command-card";
 import RemoveBackgroundCommandCard from "./remove-background-command-card";
 import { Button } from "@/components/ui/button";
 import { PenBoxIcon, Trash2 } from "lucide-react";
+import MoveCharacterCard from "./move-character-card";
 const MainCard = ({
   id,
   data,
@@ -25,7 +27,8 @@ const MainCard = ({
   data: Conversation | Command;
   slide: Slides;
 }) => {
-  const { toggleEdits, visualNovel, setVisualNovel } = useBuilderContext();
+  const { toggleEdits, visualNovel, setVisualNovel, setSelectedCommand } =
+    useBuilderContext();
   const { attributes, listeners, setNodeRef, transform, transition } =
     useSortable({ id });
 
@@ -41,6 +44,11 @@ const MainCard = ({
     let newSlides = [...visualNovel];
     newSlides.splice(selectedIdx, 1);
     setVisualNovel(newSlides);
+  }
+
+  function handleEditCard() {
+    if (!isCommand(data)) return;
+    setSelectedCommand({ command: data.type, id });
   }
 
   return (
@@ -68,6 +76,11 @@ const MainCard = ({
               <RemoveBackgroundCommandCard data={data} id={id} />
             </>
           ) : null}
+          {isMoveCharacterCommand(data) ? (
+            <>
+              <MoveCharacterCard data={data} id={id} />
+            </>
+          ) : null}
         </>
       ) : null}
       {toggleEdits ? (
@@ -77,7 +90,7 @@ const MainCard = ({
             <Button
               type="button"
               className="w-7 h-7 p-1"
-              onClick={() => {}}
+              onClick={handleEditCard}
               variant={"outline"}
               size={"icon"}
             >
