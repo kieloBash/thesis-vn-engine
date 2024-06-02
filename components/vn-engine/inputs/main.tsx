@@ -5,6 +5,7 @@ import { useBuilderContext } from "@/providers/builder";
 import { CommandsEnum } from "@/types/vn-engine/command-types";
 import RemoveBackgroundInput from "./commands-input/removeBackground";
 import MoveCharacterInput from "./commands-input/moveCharacter";
+import AddBackgroundInput from "./commands-input/addBackground";
 
 const MainInputs = () => {
   const { selectedCommand } = useBuilderContext();
@@ -12,6 +13,9 @@ const MainInputs = () => {
     <div className="col-span-3 bg-white">
       {selectedCommand ? (
         <>
+          {selectedCommand.command === CommandsEnum.AddBackground ? (
+            <AddBackgroundInput />
+          ) : null}
           {selectedCommand.command === CommandsEnum.RemoveBackground ? (
             <RemoveBackgroundInput />
           ) : null}

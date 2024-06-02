@@ -19,8 +19,7 @@ import MoreCommands from "../vn-engine/sidebars/commands-template";
 const Sidebar = () => {
   const BTNS = [
     { icon: CommandIcon, tip: "Commands" },
-    { icon: ImageDownIcon, tip: "Background" },
-    { icon: User2, tip: "Characters" },
+    { icon: ImageDownIcon, tip: "Preview" },
   ];
 
   const { active, setActive, toggleSidebar, setToggleSidebar } =
@@ -62,7 +61,7 @@ const Sidebar = () => {
           </Button>
           {active === "Characters" ? (
             <MoreActiveCharacters />
-          ) : active === "Background" ? (
+          ) : active === "Preview" ? (
             <MoreBackgrounds />
           ) : (
             <MoreCommands />

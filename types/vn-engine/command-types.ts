@@ -13,10 +13,8 @@ export enum CommandsEnum {
   PlayHigherOrderGame = "PlayHigherOrderGame",
 }
 
-export enum TransitionType {
-  Fade = "fade",
-  Feathers = "feathers",
-}
+export type TransitionType = "fade" | "feathers";
+export const TRANSITIONS: TransitionType[] = ["fade", "feathers"];
 
 // Type guard for Command
 export function isCommand(dialogue: Dialogue): dialogue is Command {

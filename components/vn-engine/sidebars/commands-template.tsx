@@ -5,6 +5,7 @@ import { ScrollArea } from "@/components/ui/scroll-area";
 import clsx from "clsx";
 import { generateRandomKey } from "@/helpers";
 import {
+  AddBackground,
   Command,
   CommandsEnum,
   MoveCharacter,
@@ -21,6 +22,12 @@ const MoreCommands = () => {
     let newData: Command | undefined;
     switch (command) {
       case CommandsEnum.AddBackground:
+        const addBG: AddBackground = {
+          id: generateRandomKey(),
+          type: CommandsEnum.AddBackground,
+          dialogueType: "command",
+        };
+        newData = addBG;
         break;
       case CommandsEnum.RemoveBackground:
         const remBG: RemoveBackground = {

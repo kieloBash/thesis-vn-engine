@@ -35,7 +35,7 @@ const ToolsSummary = () => {
             >
               Edit
             </Button>
-            <PreviewModal />
+            {/* <PreviewModal /> */}
             <Button size={"sm"}>Upload</Button>
             <Button size={"sm"}>Save</Button>
           </div>
