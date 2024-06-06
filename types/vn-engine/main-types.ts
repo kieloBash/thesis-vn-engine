@@ -8,9 +8,9 @@ export interface Conversation {
   line: string;
   justSpawned: boolean;
   isHidden?: boolean;
+  startXPos?: number;
 
   altName?: string;
-  startXPos?: number;
   dialogueType: DialogueType;
 }
 

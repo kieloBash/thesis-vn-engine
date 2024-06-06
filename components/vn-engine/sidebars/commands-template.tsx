@@ -8,6 +8,7 @@ import {
   AddBackground,
   Command,
   CommandsEnum,
+  CreateCharacter,
   MoveCharacter,
   RemoveBackground,
 } from "@/types/vn-engine/command-types";
@@ -44,6 +45,17 @@ const MoreCommands = () => {
           dialogueType: "command",
         };
         newData = moveChar;
+        break;
+      case CommandsEnum.CreateCharacter:
+        const createChar: CreateCharacter = {
+          id: generateRandomKey(),
+          type: CommandsEnum.CreateCharacter,
+          dialogueType: "command",
+          enabledOnSpawn: true,
+          immediate: false,
+          startXpos: 0.5,
+        };
+        newData = createChar;
         break;
       default:
         break;

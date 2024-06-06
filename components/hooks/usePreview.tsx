@@ -6,6 +6,7 @@ import { Background, isConversation } from "@/types/vn-engine/main-types";
 import {
   isAddBackgroundCommand,
   isCommand,
+  isCreateCharacterCommand,
   isMoveCharacterCommand,
   isRemoveBackgroundCommand,
 } from "@/types/vn-engine/command-types";
@@ -25,7 +26,7 @@ const usePreview = ({ slides }: { slides: Slides[] }) => {
         if (!spawnedCharacters.some((d) => d.name === lineSpeaker.name)) {
           spawnedCharacters = [
             ...spawnedCharacters,
-            { ...lineSpeaker, xPos: xPosSpeaker },
+            { ...lineSpeaker, xPos: xPosSpeaker, isHidden: false },
           ];
         }
 
@@ -54,6 +55,22 @@ const usePreview = ({ slides }: { slides: Slides[] }) => {
             );
           } else {
             console.log(`ERROR MOVING: ${toMoveChar?.name}`);
+          }
+        } else if (isCreateCharacterCommand(slide.dialogue)) {
+          const command = slide.dialogue;
+          const speaker = slide.dialogue.speaker;
+          if (speaker) {
+            if (!spawnedCharacters.some((d) => d.name === speaker.name)) {
+              spawnedCharacters = [
+                ...spawnedCharacters,
+                {
+                  ...speaker,
+                  xPos: command.startXpos,
+                  isHidden: !command.enabledOnSpawn,
+                },
+              ];
+            } else {
+            }
           }
         }
       }

@@ -21,6 +21,7 @@ import { ArgumentTypeEnum } from "@/types/new-types";
 import {
   isAddBackgroundCommand,
   isCommand,
+  isCreateCharacterCommand,
   isMoveCharacterCommand,
   isRemoveBackgroundCommand,
 } from "@/types/vn-engine/command-types";
@@ -73,7 +74,7 @@ export function ExportModal() {
             speakerName !== "ME"
           ) {
             let startXPos = conversation.startXPos;
-            let isHidden = conversation.isHidden;
+            let isHidden = conversation.isHidden || false;
 
             charactersSpawned.push(speakerName);
             if (
@@ -83,13 +84,17 @@ export function ExportModal() {
             ) {
               spawnedCharacters = [
                 ...spawnedCharacters,
-                { ...conversation.speaker, xPos: conversation.startXPos },
+                {
+                  ...conversation.speaker,
+                  xPos: conversation.startXPos,
+                  isHidden,
+                },
               ];
             }
 
             spawnCommand = `CreateCharacter(${speakerName} -e ${
               isHidden ? "false" : "true"
-            }), SetPosition(${speakerName} ${startXPos}:0.5)`;
+            } -i false) , SetPosition(${speakerName} ${startXPos}:0.5)`;
             ARR_TO_DISPLAY.push(spawnCommand);
           }
 
@@ -105,7 +110,6 @@ export function ExportModal() {
           return ARR_TO_DISPLAY.join("\n");
         } else {
           if (isCommand(slide.dialogue)) {
-            console.log("command");
             const command = slide.dialogue;
             if (isAddBackgroundCommand(command)) {
               if (activeBG) {
@@ -147,6 +151,33 @@ export function ExportModal() {
                 } ${newPos}:0.5 1 true)`;
               } else {
                 return `//ERROR MOVING: ${toMoveChar?.name}`;
+              }
+            } else if (isCreateCharacterCommand(command)) {
+              const toMoveChar = command.speaker;
+              const startXPos = command.startXpos;
+              const enabledOnSpawn = command.enabledOnSpawn;
+              const immediate = command.immediate;
+
+              if (
+                toMoveChar &&
+                !spawnedCharacters.some((d) => d.name === toMoveChar?.name)
+              ) {
+                // Update the xPos of the speaker if already spawned in the spawnedCharacters
+                spawnedCharacters = [
+                  ...spawnedCharacters,
+                  {
+                    ...toMoveChar,
+                    xPos: startXPos,
+                    isHidden: !enabledOnSpawn,
+                  },
+                ];
+                return `CreateCharacter(${toMoveChar.name.split(" ")[0]} -e ${
+                  enabledOnSpawn ? "true" : "false"
+                } -i ${immediate ? "true" : "false"}), SetPosition(${
+                  toMoveChar.name.split(" ")[0]
+                } ${startXPos}:0.5)`;
+              } else {
+                return `//ERROR Creating Character: ${toMoveChar?.name}`;
               }
             }
           }

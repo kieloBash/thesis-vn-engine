@@ -52,8 +52,6 @@ const MoreBackgrounds = () => {
               const rightCharacters = slide.spawnedCharacters.filter(
                 (d) => d.xPos === 1 && d.name !== "ME"
               );
-              const isHidden = slide.dialogue.isHidden;
-              console.log(conversation.speaker);
 
               return (
                 <Card key={index} className="overflow-hidden bg-transparent">
@@ -77,8 +75,9 @@ const MoreBackgrounds = () => {
                           <>
                             {leftCharacters.map((char, idx) => {
                               if (
-                                char.name === conversation.speaker.name &&
-                                isHidden
+                                char.isHidden ||
+                                (char.name === conversation.speaker.name &&
+                                  conversation.isHidden)
                               ) {
                               } else
                                 return (
@@ -100,8 +99,9 @@ const MoreBackgrounds = () => {
                           <>
                             {middleCharacters.map((char, idx) => {
                               if (
-                                char.name === conversation.speaker.name &&
-                                isHidden
+                                char.isHidden ||
+                                (char.name === conversation.speaker.name &&
+                                  conversation.isHidden)
                               ) {
                               } else
                                 return (
@@ -123,8 +123,9 @@ const MoreBackgrounds = () => {
                           <>
                             {rightCharacters.map((char, idx) => {
                               if (
-                                char.name === conversation.speaker.name &&
-                                isHidden
+                                char.isHidden ||
+                                (char.name === conversation.speaker.name &&
+                                  conversation.isHidden)
                               ) {
                               } else
                                 return (

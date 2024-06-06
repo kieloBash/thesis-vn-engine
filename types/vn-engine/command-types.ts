@@ -3,6 +3,7 @@ import { Audio, Background, Dialogue, DialogueType } from "./main-types";
 
 // Define enums for command types and transition types
 export enum CommandsEnum {
+  CreateCharacter = "CreateCharacter",
   AddBackground = "addBackground",
   RemoveBackground = "removeBackground",
   PlayMusic = "playMusic",
@@ -75,6 +76,17 @@ export function isMoveCharacterCommand(
 ): command is MoveCharacter {
   return command.type === CommandsEnum.MoveCharacter;
 }
+export interface CreateCharacter extends CharacterCommand {
+  type: CommandsEnum.CreateCharacter;
+  enabledOnSpawn: boolean;
+  immediate: boolean;
+  startXpos: number;
+}
+export function isCreateCharacterCommand(
+  command: Command
+): command is CreateCharacter {
+  return command.type === CommandsEnum.CreateCharacter;
+}
 
 export interface HideCharacter extends CharacterCommand {
   type: CommandsEnum.HideCharacter;
@@ -92,6 +104,7 @@ export interface PlayHigherOrderGame extends BaseCommand {
 
 // Union type for all commands
 export type Command =
+  | CreateCharacter
   | AddBackground
   | RemoveBackground
   | PlayMusic

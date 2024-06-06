@@ -8,6 +8,7 @@ import {
   Command,
   isAddBackgroundCommand,
   isCommand,
+  isCreateCharacterCommand,
   isMoveCharacterCommand,
   isRemoveBackgroundCommand,
 } from "@/types/vn-engine/command-types";
@@ -19,6 +20,7 @@ import { Button } from "@/components/ui/button";
 import { PenBoxIcon, Trash2 } from "lucide-react";
 import MoveCharacterCard from "./move-character-card";
 import clsx from "clsx";
+import CreateCharacterCommandCard from "./create-character-command-card";
 const MainCard = ({
   id,
   data,
@@ -98,6 +100,11 @@ const MainCard = ({
           {isMoveCharacterCommand(data) ? (
             <>
               <MoveCharacterCard data={data} id={id} />
+            </>
+          ) : null}
+          {isCreateCharacterCommand(data) ? (
+            <>
+              <CreateCharacterCommandCard data={data} id={id} />
             </>
           ) : null}
         </>

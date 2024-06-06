@@ -4,6 +4,7 @@ import { Background, Character, Dialogue } from "@/types/vn-engine/main-types";
 import * as React from "react";
 export interface SpawnedCharacterType extends Character {
   xPos?: number;
+  isHidden: boolean;
 }
 
 export type Slides = {
