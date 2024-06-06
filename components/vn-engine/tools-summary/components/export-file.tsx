@@ -217,7 +217,9 @@ export function ExportModal() {
                 .map((d) => d.name.split(" ")[0])
                 .join(" ");
 
-              return `HideCharacter(${charNames} -i ${command.isInstant})`;
+              if (validSpeakers.length > 0)
+                return `HideCharacter(${charNames} -i ${command.isInstant})`;
+              else return `//ERROR inf HideCharacter`;
             } else if (isShowCharacterCommand(slide.dialogue)) {
               const speakers = slide.dialogue.speakers;
               const command = slide.dialogue;
@@ -229,7 +231,9 @@ export function ExportModal() {
                 .map((d) => d.name.split(" ")[0])
                 .join(" ");
 
-              return `ShowCharacters(${charNames} -i ${command.isInstant})`;
+              if (validSpeakers.length > 0)
+                return `ShowCharacters(${charNames} -i ${command.isInstant})`;
+              else return `//ERROR inf ShowCharacters`;
             }
           }
         }
