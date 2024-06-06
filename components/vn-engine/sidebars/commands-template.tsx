@@ -9,8 +9,11 @@ import {
   Command,
   CommandsEnum,
   CreateCharacter,
+  FlipCharacter,
+  HideCharacter,
   MoveCharacter,
   RemoveBackground,
+  ShowCharacter,
 } from "@/types/vn-engine/command-types";
 import { Slides, useBuilderContext } from "@/providers/builder";
 
@@ -22,6 +25,7 @@ const MoreCommands = () => {
   function handleCommandClick(command: CommandsEnum) {
     let newData: Command | undefined;
     switch (command) {
+      // BACKGROUNDS
       case CommandsEnum.AddBackground:
         const addBG: AddBackground = {
           id: generateRandomKey(),
@@ -38,6 +42,8 @@ const MoreCommands = () => {
         };
         newData = remBG;
         break;
+
+      // CHARACTERS
       case CommandsEnum.MoveCharacter:
         const moveChar: MoveCharacter = {
           id: generateRandomKey(),
@@ -56,6 +62,35 @@ const MoreCommands = () => {
           startXpos: 0.5,
         };
         newData = createChar;
+        break;
+      case CommandsEnum.ShowCharacter:
+        const showChar: ShowCharacter = {
+          id: generateRandomKey(),
+          type: CommandsEnum.ShowCharacter,
+          dialogueType: "command",
+          isInstant: true,
+          speakers: [],
+        };
+        newData = showChar;
+        break;
+      case CommandsEnum.HideCharacter:
+        const hideChar: HideCharacter = {
+          id: generateRandomKey(),
+          type: CommandsEnum.HideCharacter,
+          dialogueType: "command",
+          isInstant: true,
+          speakers: [],
+        };
+        newData = hideChar;
+        break;
+      case CommandsEnum.FlipCharacter:
+        const flipChar: FlipCharacter = {
+          id: generateRandomKey(),
+          type: CommandsEnum.FlipCharacter,
+          dialogueType: "command",
+          isInstant: true,
+        };
+        newData = flipChar;
         break;
       default:
         break;

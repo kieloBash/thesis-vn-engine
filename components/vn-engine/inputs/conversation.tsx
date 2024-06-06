@@ -89,7 +89,10 @@ const ConversationInput = () => {
     };
     let newSpawnedCharacter;
     if (!justSpawned) {
-      newSpawnedCharacter = [...spawnedCharacters, { ...speaker, xPos }];
+      newSpawnedCharacter = [
+        ...spawnedCharacters,
+        { ...speaker, xPos, isHidden, isFlipped: false },
+      ];
       setSpawnedCharacters(newSpawnedCharacter);
     } else {
       newSpawnedCharacter = [...spawnedCharacters];

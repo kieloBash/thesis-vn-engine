@@ -5,6 +5,7 @@ import * as React from "react";
 export interface SpawnedCharacterType extends Character {
   xPos?: number;
   isHidden: boolean;
+  isFlipped: boolean;
 }
 
 export type Slides = {

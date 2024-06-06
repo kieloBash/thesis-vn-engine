@@ -8,6 +8,7 @@ import MoveCharacterInput from "./commands-input/moveCharacter";
 import AddBackgroundInput from "./commands-input/addBackground";
 import EditConversationInput from "./edit-conversation";
 import CreateCharacterInput from "./commands-input/createCharacter";
+import FlipCharacterInput from "./commands-input/flipCharacter";
 
 const MainInputs = () => {
   const { selectedCommand } = useBuilderContext();
@@ -27,11 +28,15 @@ const MainInputs = () => {
               {selectedCommand?.command === CommandsEnum.RemoveBackground ? (
                 <RemoveBackgroundInput />
               ) : null}
+
               {selectedCommand?.command === CommandsEnum.MoveCharacter ? (
                 <MoveCharacterInput />
               ) : null}
               {selectedCommand?.command === CommandsEnum.CreateCharacter ? (
                 <CreateCharacterInput />
+              ) : null}
+              {selectedCommand?.command === CommandsEnum.FlipCharacter ? (
+                <FlipCharacterInput />
               ) : null}
             </>
           )}

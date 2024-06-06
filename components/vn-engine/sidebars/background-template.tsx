@@ -35,6 +35,7 @@ const MoreBackgrounds = () => {
   } = useBuilderContext();
 
   const previewSlides = usePreview({ slides: visualNovel });
+  const flippedClassName = (b: boolean) => clsx("", b ? "scale-x-[-1]" : "");
   return (
     <div className="w-full h-full flex flex-col justify-start items-center">
       <h2 className="text-center text-2xl font-bold">Preview</h2>
@@ -87,6 +88,9 @@ const MoreBackgrounds = () => {
                                       src={char?.image?.src}
                                       width={60}
                                       height={60}
+                                      className={flippedClassName(
+                                        char.isFlipped
+                                      )}
                                     />
                                   </div>
                                 );
@@ -111,6 +115,9 @@ const MoreBackgrounds = () => {
                                       src={char?.image?.src}
                                       width={60}
                                       height={60}
+                                      className={flippedClassName(
+                                        char.isFlipped
+                                      )}
                                     />
                                   </div>
                                 );
@@ -135,6 +142,9 @@ const MoreBackgrounds = () => {
                                       src={char?.image?.src}
                                       width={60}
                                       height={60}
+                                      className={flippedClassName(
+                                        char.isFlipped
+                                      )}
                                     />
                                   </div>
                                 );

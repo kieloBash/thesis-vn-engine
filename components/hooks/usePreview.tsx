@@ -7,6 +7,7 @@ import {
   isAddBackgroundCommand,
   isCommand,
   isCreateCharacterCommand,
+  isFlipCharacterCommand,
   isMoveCharacterCommand,
   isRemoveBackgroundCommand,
 } from "@/types/vn-engine/command-types";
@@ -26,7 +27,12 @@ const usePreview = ({ slides }: { slides: Slides[] }) => {
         if (!spawnedCharacters.some((d) => d.name === lineSpeaker.name)) {
           spawnedCharacters = [
             ...spawnedCharacters,
-            { ...lineSpeaker, xPos: xPosSpeaker, isHidden: false },
+            {
+              ...lineSpeaker,
+              xPos: xPosSpeaker,
+              isHidden: false,
+              isFlipped: false,
+            },
           ];
         }
 
@@ -69,6 +75,21 @@ const usePreview = ({ slides }: { slides: Slides[] }) => {
                   isHidden: !command.enabledOnSpawn,
                 },
               ];
+            } else {
+            }
+          }
+        } else if (isFlipCharacterCommand(slide.dialogue)) {
+          const speaker = slide.dialogue.speaker;
+
+          if (speaker) {
+            let selectedSpeakerIdx = spawnedCharacters.findIndex(
+              (d) => d.name === speaker.name
+            );
+            if (selectedSpeakerIdx !== -1) {
+              let newSpeakers = [...spawnedCharacters];
+              newSpeakers[selectedSpeakerIdx].isFlipped =
+                !newSpeakers[selectedSpeakerIdx].isFlipped || false;
+              
             } else {
             }
           }

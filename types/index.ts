@@ -1,6 +1,10 @@
 import { FullArgument } from "./new-types";
 
-export type SidebarButtonsType = "Characters" | "Background" | "Commands" | "Preview";
+export type SidebarButtonsType =
+  | "Characters"
+  | "Background"
+  | "Commands"
+  | "Preview";
 export interface StoryLine {
   speaker: Speaker;
   dialogue: string;
@@ -11,6 +15,7 @@ export interface Speaker {
   image?: any;
   xPos?: number;
   yPos?: number;
+  isFlipped: boolean;
 }
 export interface Background {
   name: string;

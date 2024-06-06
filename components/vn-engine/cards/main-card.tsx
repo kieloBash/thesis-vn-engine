@@ -9,8 +9,11 @@ import {
   isAddBackgroundCommand,
   isCommand,
   isCreateCharacterCommand,
+  isFlipCharacterCommand,
+  isHideCharacterCommand,
   isMoveCharacterCommand,
   isRemoveBackgroundCommand,
+  isShowCharacterCommand,
 } from "@/types/vn-engine/command-types";
 import { Slides, useBuilderContext } from "@/providers/builder";
 import ConversationCard from "./conversation-card";
@@ -21,6 +24,9 @@ import { PenBoxIcon, Trash2 } from "lucide-react";
 import MoveCharacterCard from "./move-character-card";
 import clsx from "clsx";
 import CreateCharacterCommandCard from "./create-character-command-card";
+import FlipCharacterCommandCard from "./flip-character-command-card";
+import ShowCharacterCommandCard from "./show-character-command-card";
+import HideCharacterCommandCard from "./hide-character-command-card";
 const MainCard = ({
   id,
   data,
@@ -97,6 +103,8 @@ const MainCard = ({
               <RemoveBackgroundCommandCard data={data} id={id} />
             </>
           ) : null}
+
+          {/* CHARACTER */}
           {isMoveCharacterCommand(data) ? (
             <>
               <MoveCharacterCard data={data} id={id} />
@@ -105,6 +113,21 @@ const MainCard = ({
           {isCreateCharacterCommand(data) ? (
             <>
               <CreateCharacterCommandCard data={data} id={id} />
+            </>
+          ) : null}
+          {isShowCharacterCommand(data) ? (
+            <>
+              <ShowCharacterCommandCard data={data} id={id} />
+            </>
+          ) : null}
+          {isHideCharacterCommand(data) ? (
+            <>
+              <HideCharacterCommandCard data={data} id={id} />
+            </>
+          ) : null}
+          {isFlipCharacterCommand(data) ? (
+            <>
+              <FlipCharacterCommandCard data={data} id={id} />
             </>
           ) : null}
         </>

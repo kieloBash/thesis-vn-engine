@@ -22,6 +22,7 @@ import {
   isAddBackgroundCommand,
   isCommand,
   isCreateCharacterCommand,
+  isFlipCharacterCommand,
   isMoveCharacterCommand,
   isRemoveBackgroundCommand,
 } from "@/types/vn-engine/command-types";
@@ -88,6 +89,7 @@ export function ExportModal() {
                   ...conversation.speaker,
                   xPos: conversation.startXPos,
                   isHidden,
+                  isFlipped: conversation.speaker.isFlipped || false,
                 },
               ];
             }
@@ -169,6 +171,7 @@ export function ExportModal() {
                     ...toMoveChar,
                     xPos: startXPos,
                     isHidden: !enabledOnSpawn,
+                    isFlipped: toMoveChar.isFlipped || false,
                   },
                 ];
                 return `CreateCharacter(${toMoveChar.name.split(" ")[0]} -e ${
@@ -178,6 +181,28 @@ export function ExportModal() {
                 } ${startXPos}:0.5)`;
               } else {
                 return `//ERROR Creating Character: ${toMoveChar?.name}`;
+              }
+            } else if (isFlipCharacterCommand(slide.dialogue)) {
+              const speaker = slide.dialogue.speaker;
+              const command = slide.dialogue;
+
+              if (speaker) {
+                let selectedSpeakerIdx = spawnedCharacters.findIndex(
+                  (d) => d.name === speaker.name
+                );
+                if (selectedSpeakerIdx !== -1) {
+                  let newSpeakers = [...spawnedCharacters];
+
+                  newSpeakers[selectedSpeakerIdx].isFlipped =
+                    !newSpeakers[selectedSpeakerIdx].isFlipped || false;
+                  let selectedSpeaker = newSpeakers[selectedSpeakerIdx];
+
+                  return `FlipCharacter(${
+                    selectedSpeaker.name.split(" ")[0]
+                  } -i ${command.isInstant ? "true" : "false"})`;
+                } else {
+                  return `//ERROR Flipping Character: ${speaker?.name}`;
+                }
               }
             }
           }

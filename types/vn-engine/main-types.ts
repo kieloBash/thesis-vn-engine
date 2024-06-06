@@ -17,6 +17,7 @@ export interface Conversation {
 export interface Character {
   name: string;
   image?: any;
+  isFlipped: boolean;
 }
 export interface Background {
   name: string;

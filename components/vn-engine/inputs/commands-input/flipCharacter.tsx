@@ -22,9 +22,12 @@ import Image from "next/image";
 import {
   isCommand,
   isCreateCharacterCommand,
+  isFlipCharacterCommand,
 } from "@/types/vn-engine/command-types";
+import clsx from "clsx";
+import { Checkbox } from "@/components/ui/checkbox";
 
-const CreateCharacterInput = () => {
+const FlipCharacterInput = () => {
   const {
     visualNovel,
     setVisualNovel,
@@ -34,26 +37,15 @@ const CreateCharacterInput = () => {
   } = useBuilderContext();
 
   const [speaker, setSpeaker] = useState<Character | undefined>(undefined);
-  const [xPos, setxPos] = useState<number>(0.5);
-  const [enabledOnSpawn, setEnabledOnSpawn] = useState<boolean>(true);
   const [immediate, setImmediate] = useState<boolean>(false);
-
   useEffect(() => {
     if (
       selectedSlide &&
       isCommand(selectedSlide.dialogue) &&
-      isCreateCharacterCommand(selectedSlide.dialogue)
+      isFlipCharacterCommand(selectedSlide.dialogue)
     ) {
       setSpeaker(selectedSlide.dialogue.speaker);
-      if (
-        selectedSlide.dialogue.startXpos === 0 ||
-        selectedSlide.dialogue.startXpos === 0.5 ||
-        selectedSlide.dialogue.startXpos === 1
-      ) {
-        setxPos(selectedSlide.dialogue.startXpos);
-      }
-      setImmediate(selectedSlide.dialogue.immediate);
-      setEnabledOnSpawn(selectedSlide.dialogue.enabledOnSpawn);
+      setImmediate(selectedSlide.dialogue.isInstant);
     }
   }, [selectedCommand, selectedSlide, speaker]);
 
@@ -71,19 +63,27 @@ const CreateCharacterInput = () => {
     );
     if (selectedIdx === -1) return;
     let newSlides = [...visualNovel];
-    let newData = {
-      ...newSlides[selectedIdx].dialogue,
-      speaker,
-      startXpos: xPos,
-      enabledOnSpawn,
-      immediate,
-    };
-    newSlides[selectedIdx] = { ...newSlides[selectedIdx], dialogue: newData };
-    setVisualNovel(newSlides);
-    setSelectedCommand(undefined);
-    resetForm();
+    if (
+      newSlides[selectedIdx].dialogue &&
+      isCommand(newSlides[selectedIdx].dialogue) &&
+      isFlipCharacterCommand(newSlides[selectedIdx].dialogue)
+    ) {
+      const newSpeaker = {
+        ...speaker,
+      };
+      let newData = {
+        ...newSlides[selectedIdx].dialogue,
+        speaker: newSpeaker,
+        isInstant: immediate,
+      };
+      newSlides[selectedIdx] = { ...newSlides[selectedIdx], dialogue: newData };
+      setVisualNovel(newSlides);
+      setSelectedCommand(undefined);
+      resetForm();
+    }
   }
 
+  // const flippedClassName = clsx("opacity-80", flipped ? "scale-x-[-1]" : "");
   return (
     <form
       onSubmit={handleSubmit}
@@ -91,7 +91,7 @@ const CreateCharacterInput = () => {
     >
       {/* HEADER */}
       <div className="absolute top-0 z-10 bg-white h-14 border-b w-full flex justify-between items-center p-4">
-        <h3 className="font-medium text-lg">COMMAND: Create Character</h3>
+        <h3 className="font-medium text-lg">COMMAND: Flip Character</h3>
         <div className="flex gap-2"></div>
       </div>
 
@@ -137,58 +137,28 @@ const CreateCharacterInput = () => {
             </SelectContent>
           </Select>
         </div>
-        <div className="grid gap-0.5 mt-4 px-2">
-          <Label htmlFor="dialogue" className="uppercase font-medium">
-            Starting Position
-          </Label>
-          <Select
-            value={`${
-              xPos === 0.5 ? "0.5" : xPos === 0 ? "0" : xPos === 1 ? "1" : ""
-            }`}
-            onValueChange={(e) => {
-              setxPos(e === "0.5" ? 0.5 : e === "0" ? 0 : 1);
-            }}
-          >
-            <SelectTrigger className="w-[320px]">
-              <SelectValue placeholder="Select a new position" />
-            </SelectTrigger>
-            <SelectContent id="xPos">
-              <SelectGroup>
-                <SelectLabel>Position</SelectLabel>
-                <SelectItem value={"0"}>Left</SelectItem>
-                <SelectItem value={"0.5"}>Center</SelectItem>
-                <SelectItem value={"1"}>Right</SelectItem>
-              </SelectGroup>
-            </SelectContent>
-          </Select>
-        </div>
-        <div className="grid gap-0.5 mt-4 px-2">
-          <Label htmlFor="dialogue" className="uppercase font-medium">
-            Visibility
-          </Label>
-          <Select
-            value={`${enabledOnSpawn ? "Visible" : "Hidden"}`}
-            onValueChange={(e) => {
-              setEnabledOnSpawn(e === "Visible" ? true : false);
-            }}
-          >
-            <SelectTrigger className="w-[320px]">
-              <SelectValue placeholder="Select a one" />
-            </SelectTrigger>
-            <SelectContent id="visibility">
-              <SelectGroup>
-                <SelectLabel>Visibility</SelectLabel>
-                {["Visible", "Hidden"].map((d, index) => {
-                  return (
-                    <SelectItem key={index} value={d}>
-                      {d}
-                    </SelectItem>
-                  );
-                })}
-              </SelectGroup>
-            </SelectContent>
-          </Select>
-        </div>
+        {/* <div className="items-top flex space-x-2 mt-4 px-2">
+          <Checkbox
+            id="isFlipped"
+            disabled
+            checked={flipped}
+            // onCheckedChange={(e) => {
+            //   if (e) {
+            //     setFlipped(true);
+            //   } else {
+            //     setFlipped(false);
+            //   }
+            // }}
+          />
+          <div className="grid gap-1.5 leading-none">
+            <label
+              htmlFor="isFlipped"
+              className="text-sm font-medium leading-none peer-disabled:cursor-not-allowed peer-disabled:opacity-70"
+            >
+              Flipped
+            </label>
+          </div>
+        </div> */}
         <div className="grid gap-0.5 mt-4 px-2">
           <Label htmlFor="dialogue" className="uppercase font-medium">
             TRANSITION
@@ -219,47 +189,41 @@ const CreateCharacterInput = () => {
       </ScrollArea>
 
       {/* PREVIEW */}
-      {speaker && (
+      {/* {speaker && (
         <div className="w-full h-80 px-10 mb-14 relative overflow-hidden">
           <div className="w-full h-full overflow-hidden relative border rounded-lg shadow-sm bg-slate-800 grid grid-cols-3 divide-x divide-dashed">
             <div className="flex justify-center items-end">
-              {speaker &&
-                speaker.name !== "ME" &&
-                xPos === 0 &&
-                enabledOnSpawn && (
-                  <Image
-                    alt="speaker"
-                    src={speaker.image.src}
-                    width={85}
-                    height={85}
-                  />
-                )}
+              {speaker && speaker.name !== "ME" && (
+                <Image
+                  alt="speaker"
+                  src={speaker.image.src}
+                  // className={flippedClassName}
+                  width={85}
+                  height={85}
+                />
+              )}
             </div>
             <div className="flex justify-center items-end">
-              {speaker &&
-                speaker.name !== "ME" &&
-                xPos === 0.5 &&
-                enabledOnSpawn && (
-                  <Image
-                    alt="speaker"
-                    src={speaker.image.src}
-                    width={85}
-                    height={85}
-                  />
-                )}
+              {speaker && speaker.name !== "ME" && (
+                <Image
+                  alt="speaker"
+                  src={speaker.image.src}
+                  // className={flippedClassName}
+                  width={85}
+                  height={85}
+                />
+              )}
             </div>
             <div className="flex justify-center items-end">
-              {speaker &&
-                speaker.name !== "ME" &&
-                xPos === 1 &&
-                enabledOnSpawn && (
-                  <Image
-                    alt="speaker"
-                    src={speaker.image?.src}
-                    width={85}
-                    height={85}
-                  />
-                )}
+              {speaker && speaker.name !== "ME" && (
+                <Image
+                  alt="speaker"
+                  src={speaker.image?.src}
+                  // className={flippedClassName}
+                  width={85}
+                  height={85}
+                />
+              )}
             </div>
 
             <div className="w-full absolute bottom-0 h-14 bg-black/50 p-4 flex flex-col justify-center items-start">
@@ -272,7 +236,7 @@ const CreateCharacterInput = () => {
             </div>
           </div>
         </div>
-      )}
+      )} */}
 
       {/* FOOTER */}
       <div className="absolute bottom-0 z-10 bg-white h-14 border-t w-full flex justify-between items-center p-4">
@@ -287,4 +251,4 @@ const CreateCharacterInput = () => {
   );
 };
 
-export default CreateCharacterInput;
+export default FlipCharacterInput;

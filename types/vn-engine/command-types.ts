@@ -4,12 +4,14 @@ import { Audio, Background, Dialogue, DialogueType } from "./main-types";
 // Define enums for command types and transition types
 export enum CommandsEnum {
   CreateCharacter = "CreateCharacter",
+  MoveCharacter = "MoveCharacter",
+  HideCharacter = "HideCharacter",
+  ShowCharacter = "ShowCharacter",
+  FlipCharacter = "FlipCharacter",
   AddBackground = "addBackground",
   RemoveBackground = "removeBackground",
   PlayMusic = "playMusic",
   StopMusic = "stopMusic",
-  MoveCharacter = "MoveCharacter",
-  HideCharacter = "HideCharacter",
   PlayLowerOrderGame = "PlayLowerOrderGame",
   PlayHigherOrderGame = "PlayHigherOrderGame",
 }
@@ -65,6 +67,8 @@ export interface PlayMusic extends MusicCommand {
 export interface StopMusic extends MusicCommand {
   type: CommandsEnum.StopMusic;
 }
+
+// CHARACTER
 export interface MoveCharacter extends CharacterCommand {
   type: CommandsEnum.MoveCharacter;
   xPos?: number;
@@ -87,14 +91,39 @@ export function isCreateCharacterCommand(
 ): command is CreateCharacter {
   return command.type === CommandsEnum.CreateCharacter;
 }
-
 export interface HideCharacter extends CharacterCommand {
   type: CommandsEnum.HideCharacter;
-
-  transition: TransitionType;
-  speed_duration?: number;
-  isInstant?: boolean;
+  speakers: Speaker[];
+  isInstant: boolean;
 }
+export function isHideCharacterCommand(
+  command: Command
+): command is HideCharacter {
+  return command.type === CommandsEnum.HideCharacter;
+}
+
+export interface ShowCharacter extends CharacterCommand {
+  type: CommandsEnum.ShowCharacter;
+  speakers: Speaker[];
+  isInstant: boolean;
+}
+export function isShowCharacterCommand(
+  command: Command
+): command is ShowCharacter {
+  return command.type === CommandsEnum.ShowCharacter;
+}
+
+export interface FlipCharacter extends CharacterCommand {
+  type: CommandsEnum.FlipCharacter;
+  isInstant: boolean;
+}
+export function isFlipCharacterCommand(
+  command: Command
+): command is FlipCharacter {
+  return command.type === CommandsEnum.FlipCharacter;
+}
+
+// GAME
 export interface PlayLowerOrderGame extends BaseCommand {
   type: CommandsEnum.PlayLowerOrderGame;
 }
@@ -105,11 +134,13 @@ export interface PlayHigherOrderGame extends BaseCommand {
 // Union type for all commands
 export type Command =
   | CreateCharacter
+  | MoveCharacter
+  | ShowCharacter
+  | FlipCharacter
+  | HideCharacter
   | AddBackground
   | RemoveBackground
   | PlayMusic
   | StopMusic
-  | MoveCharacter
-  | HideCharacter
   | PlayLowerOrderGame
   | PlayHigherOrderGame;
