@@ -17,7 +17,7 @@ const HideCharacterCommandCard = ({
 }) => {
   const { selectedSlide } = useBuilderContext();
 
-  const blank = !data.speaker;
+  const blank = data.speakers.length <= 0;
   const mainClassName = clsx(
     "w-full h-full absolute top-0 left-0 flex px-4 rounded-md",
     blank ? "bg-red-100 border border-black shadow-sm" : "bg-blue-50",
@@ -28,9 +28,25 @@ const HideCharacterCommandCard = ({
     <div className={mainClassName}>
       <div className="flex gap-2 justify-center items-center font-mono">
         <p className="text-xs">Hide</p>
-        <p className="text-xs bg-slate-200 px-2 py-1 rounded-md">
-          {data.speaker ? data.speaker.name.split(" ")[0] : "unknown"}
-        </p>
+        {data.speakers.length > 0 ? (
+          <div className="flex justify-start items-center gap-1">
+            {data.speakers.map((speaker) => {
+              return (
+                <p
+                  key={speaker.name}
+                  className="text-xs bg-slate-200 px-2 py-1 rounded-md"
+                >
+                  {speaker.name.split(" ")[0]}
+                </p>
+              );
+            })}
+          </div>
+        ) : (
+          <>
+            <p className="text-xs bg-slate-200 px-2 py-1 rounded-md">unknown</p>
+          </>
+        )}
+
         <p className="text-xs bg-slate-200 px-2 py-1 rounded-md">
           {data.isInstant ? "Immediate" : "Fade In"}
         </p>

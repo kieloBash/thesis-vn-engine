@@ -21,11 +21,8 @@ import { useBuilderContext } from "@/providers/builder";
 import Image from "next/image";
 import {
   isCommand,
-  isCreateCharacterCommand,
   isFlipCharacterCommand,
 } from "@/types/vn-engine/command-types";
-import clsx from "clsx";
-import { Checkbox } from "@/components/ui/checkbox";
 
 const FlipCharacterInput = () => {
   const {

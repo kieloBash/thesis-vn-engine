@@ -8,8 +8,10 @@ import {
   isCommand,
   isCreateCharacterCommand,
   isFlipCharacterCommand,
+  isHideCharacterCommand,
   isMoveCharacterCommand,
   isRemoveBackgroundCommand,
+  isShowCharacterCommand,
 } from "@/types/vn-engine/command-types";
 
 const usePreview = ({ slides }: { slides: Slides[] }) => {
@@ -89,10 +91,25 @@ const usePreview = ({ slides }: { slides: Slides[] }) => {
               let newSpeakers = [...spawnedCharacters];
               newSpeakers[selectedSpeakerIdx].isFlipped =
                 !newSpeakers[selectedSpeakerIdx].isFlipped || false;
-              
             } else {
             }
           }
+        } else if (isHideCharacterCommand(slide.dialogue)) {
+          const speakers = slide.dialogue.speakers;
+          const updatedCharacters = updateCharacters(
+            spawnedCharacters,
+            speakers,
+            true // isHidden = true
+          );
+          spawnedCharacters = [...updatedCharacters];
+        } else if (isShowCharacterCommand(slide.dialogue)) {
+          const speakers = slide.dialogue.speakers;
+          const updatedCharacters = updateCharacters(
+            spawnedCharacters,
+            speakers,
+            false // isHidden = false
+          );
+          spawnedCharacters = [...updatedCharacters];
         }
       }
     });
@@ -102,5 +119,17 @@ const usePreview = ({ slides }: { slides: Slides[] }) => {
 
   return previewSlides;
 };
+
+function updateCharacters(characters: any[], speakers: any[], flag: boolean) {
+  return characters.map((character) => {
+    const speakerMatch = speakers.find(
+      (speaker) => speaker.name === character.name
+    );
+    if (speakerMatch) {
+      return { ...character, isHidden: flag }; // Update isHidden to true if a match is found
+    }
+    return character; // Return the original character if no match is found
+  });
+}
 
 export default usePreview;

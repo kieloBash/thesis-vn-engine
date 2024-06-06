@@ -23,8 +23,10 @@ import {
   isCommand,
   isCreateCharacterCommand,
   isFlipCharacterCommand,
+  isHideCharacterCommand,
   isMoveCharacterCommand,
   isRemoveBackgroundCommand,
+  isShowCharacterCommand,
 } from "@/types/vn-engine/command-types";
 import { Background, isConversation } from "@/types/vn-engine/main-types";
 import { useMemo, useState } from "react";
@@ -204,6 +206,30 @@ export function ExportModal() {
                   return `//ERROR Flipping Character: ${speaker?.name}`;
                 }
               }
+            } else if (isHideCharacterCommand(slide.dialogue)) {
+              const speakers = slide.dialogue.speakers;
+              const command = slide.dialogue;
+              const validSpeakers = spawnedCharacters.filter((character) =>
+                speakers.some((speaker) => speaker.name === character.name)
+              );
+
+              const charNames = validSpeakers
+                .map((d) => d.name.split(" ")[0])
+                .join(" ");
+
+              return `HideCharacter(${charNames} -i ${command.isInstant})`;
+            } else if (isShowCharacterCommand(slide.dialogue)) {
+              const speakers = slide.dialogue.speakers;
+              const command = slide.dialogue;
+              const validSpeakers = spawnedCharacters.filter((character) =>
+                speakers.some((speaker) => speaker.name === character.name)
+              );
+
+              const charNames = validSpeakers
+                .map((d) => d.name.split(" ")[0])
+                .join(" ");
+
+              return `ShowCharacters(${charNames} -i ${command.isInstant})`;
             }
           }
         }
